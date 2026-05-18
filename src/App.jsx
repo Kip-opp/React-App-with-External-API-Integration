@@ -9,8 +9,8 @@ import CreateEventForm from './components/CreateEventForm';
 import EventDetails from './components/EventDetails';
 import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
-import SavedEventsView from './components/SavedEventsView';
-import MyEventsView from './components/MyEventsView';
+import SavedEvents from "./components/profile/SavedEvents";
+import MyEvents from './components/profile/MyEvents';
 import authService from './services/authService';
 import { useEvents } from './hooks/useEvents';
 import { useDebounce } from './hooks/useDebounce';
@@ -146,14 +146,14 @@ function App() {
         )}
 
         {currentView === 'my-events' && (
-          <MyEventsView
+          <MyEvents
             onEventClick={handleEventClick}
             onClose={handleBackToAllEvents}
           />
         )}
 
         {currentView === 'saved-events' && (
-          <SavedEventsView
+          <SavedEvents
             onEventClick={handleEventClick}
             onClose={handleBackToAllEvents}
           />

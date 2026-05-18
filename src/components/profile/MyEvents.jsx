@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import eventbriteService from '../services/eventbriteService';
-import authService from '../services/authService';
-import EventGrid from './EventGrid';
-import StateViews from './StateViews';
-import './style/SavedEventsView.css';
+import eventbriteService from '../../services/eventbriteService';
+import authService from '../../services/authService';
+import EventGrid from '../EventGrid';
+import { Loader as Loading, ErrorState, EmptyState } from '../StateViews';
+import '../style/SavedEvents.css';
 
-const MyEventsView = ({ onEventClick, onClose }) => {
+const MyEvents = ({ onEventClick, onClose }) => {
   const [myEvents, setMyEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,17 +39,17 @@ const MyEventsView = ({ onEventClick, onClose }) => {
         </button>
       </div>
 
-      {loading && <StateViews.Loading />}
+      {loading && <Loading />}
       
       {error && (
-        <StateViews.Error 
+        <ErrorState 
           message={error} 
           onRetry={fetchMyEvents}
         />
       )}
       
       {!loading && !error && myEvents.length === 0 && (
-        <StateViews.Empty 
+        <EmptyState 
           message="You haven't created any events yet. Click 'Create Event' to get started!"
         />
       )}
@@ -64,4 +64,4 @@ const MyEventsView = ({ onEventClick, onClose }) => {
   );
 };
 
-export default MyEventsView;
+export default MyEvents;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import savedEventsService from '../services/savedEventsService';
-import EventGrid from './EventGrid';
-import StateViews from './StateViews';
-import './style/SavedEventsView.css';
+import savedEventsService from "../../services/savedEventsService";
+import EventGrid from '../EventGrid';
+import StateViews from '../StateViews';
+import '../style/SavedEvents.css';
 
-const SavedEventsView = ({ onEventClick, onClose }) => {
+const SavedEvents = ({ onEventClick, onClose }) => {
   const [savedEvents, setSavedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -73,4 +73,4 @@ const SavedEventsView = ({ onEventClick, onClose }) => {
   );
 };
 
-export default SavedEventsView;
+export default SavedEvents;

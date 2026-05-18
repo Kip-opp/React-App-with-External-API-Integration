@@ -33,4 +33,4 @@ venv/
 backend/__pycache__/
 backend/*.pyc
 backend/eventsphere.db
-backend/.env
+backend/.envbackend/instance/events.db
