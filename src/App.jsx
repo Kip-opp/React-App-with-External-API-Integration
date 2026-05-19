@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import './App.css';
+
 import NavBar from './components/NavBar';
 import SearchHero from './components/SearchHero';
 import EventGrid from './components/EventGrid';
@@ -11,9 +13,19 @@ import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
 import SavedEventsView from './components/SavedEventsView';
 import MyEventsView from './components/MyEventsView';
+import AdminDashboard from './components/AdminDashboard';
+import OrganizerDashboard from './components/OrganizerDashboard';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import RecommendationsView from './components/RecommendationsView';
+import Pagination from './components/Pagination';
+
 import authService from './services/authService';
+import eventbriteService from './services/eventbriteService';
+import savedEventsService from './services/savedEventsService';
+
 import { useEvents } from './hooks/useEvents';
 import { useDebounce } from './hooks/useDebounce';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 const QUICK_CATEGORIES = [
   { key: 'all', label: 'All Events', icon: '🌐' },
@@ -30,26 +42,175 @@ function App() {
   const [activeSource, setActiveSource] = useState('all');
   const [pendingEvent, setPendingEvent] = useState(null);
   const [toast, setToast] = useState(null);
+  const [user, setUser] = useState(authService.getCurrentUser?.());
 
-  const debouncedSearch = useDebounce(searchQuery, 500);
-  const createFormRef = useRef(null);
-  const eventsRef = useRef(null);
-
-  const { events, loading, error, total, refetch } = useEvents(
-    debouncedSearch,
-    activeSource
+  const [darkMode, setDarkMode] = useLocalStorage(
+    'eventsphere_dark_mode',
+    false
   );
 
-  const featuredEvent = events?.[0];
-  const previewEvents = events?.slice(0, 4) || [];
+  const { debouncedValue: debouncedSearch } =
+    useDebounce(searchQuery, 500);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
+  const createFormRef = useRef(null);
+  const eventsRef = useRef(null);
+  const shownRemindersRef = useRef(new Set());
+  const reminderAudioRef = useRef(null);
+
+  const {
+    events,
+    loading,
+    error,
+    total,
+    page,
+    totalPages,
+    hasNext,
+    hasPrevious,
+    nextPage,
+    previousPage,
+    goToPage,
+    refetch,
+  } = useEvents(debouncedSearch, activeSource);
+
+  const featuredEvent = events?.[0];
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
+    reminderAudioRef.current = new Audio('/sound.mp3');
+    reminderAudioRef.current.loop = true;
+    reminderAudioRef.current.volume = 0.85;
+
+    return () => {
+      if (reminderAudioRef.current) {
+        reminderAudioRef.current.pause();
+        reminderAudioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
+  const stopReminderSound = () => {
+    if (reminderAudioRef.current) {
+      reminderAudioRef.current.pause();
+      reminderAudioRef.current.currentTime = 0;
+    }
+  };
+
+  const playReminderSound = () => {
+    try {
+      if (!reminderAudioRef.current) {
+        reminderAudioRef.current = new Audio('/sound.mp3');
+        reminderAudioRef.current.loop = true;
+        reminderAudioRef.current.volume = 0.85;
+      }
+
+      reminderAudioRef.current.currentTime = 0;
+      reminderAudioRef.current.play().catch((error) => {
+        console.error('Reminder sound blocked or failed:', error);
+      });
+    } catch (error) {
+      console.error('Reminder sound failed:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      return;
+    }
+
+    const checkReminders = async () => {
+      try {
+        const data = await savedEventsService.getReminders();
+        const reminders = data.reminders || [];
+        const now = new Date();
+
+        reminders.forEach((reminder) => {
+          if (!reminder.reminder_datetime) return;
+
+          if (shownRemindersRef.current.has(reminder.id)) return;
+
+          const reminderTime = new Date(reminder.reminder_datetime);
+
+          const diff =
+            reminderTime.getTime() -
+            now.getTime();
+
+          if (
+            diff <= 5 * 60 * 1000 &&
+            diff >= -60 * 1000
+          ) {
+            playReminderSound();
+
+            setToast({
+              type: 'reminder',
+              persistent: true,
+              message: reminder.notes?.trim()
+                ? reminder.notes
+                : `Reminder: ${reminder.event_name} starts soon`,
+            });
+
+            shownRemindersRef.current.add(reminder.id);
+          }
+        });
+      } catch (error) {
+        console.error('Reminder polling failed:', error);
+      }
+    };
+
+    checkReminders();
+
+    const interval =
+      setInterval(checkReminders, 60000);
+
+    return () =>
+      clearInterval(interval);
+  }, [user]);
+
+  useEffect(() => {
+    const syncUser = () => {
+      setUser(authService.getCurrentUser?.());
+    };
+
+    window.addEventListener('auth-change', syncUser);
+
+    return () =>
+      window.removeEventListener('auth-change', syncUser);
+  }, []);
+
+  useEffect(() => {
+    if (currentView === 'create' && createFormRef.current) {
+      createFormRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }, [currentView]);
+
+  const showToast = (
+    message,
+    type = 'success',
+    options = {}
+  ) => {
+    setToast({
+      message,
+      type,
+      persistent: options.persistent || false,
+    });
+  };
+
+  const handleCloseToast = () => {
+    stopReminderSound();
+    setToast(null);
   };
 
   const scrollToEvents = () => {
     setTimeout(() => {
-      eventsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      eventsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
     }, 100);
   };
 
@@ -58,12 +219,6 @@ function App() {
     setCurrentView('all-events');
     scrollToEvents();
   };
-
-  useEffect(() => {
-    if (currentView === 'create' && createFormRef.current) {
-      createFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [currentView]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -74,16 +229,17 @@ function App() {
   const handleEventCreated = () => {
     setCurrentView('all-events');
     refetch();
-    showToast('Event created successfully!', 'success');
+    showToast('Event submitted successfully', 'success');
   };
 
   const handleEventClick = (event) => {
     if (!authService.isAuthenticated()) {
       setPendingEvent(event);
       setShowAuthModal(true);
-    } else {
-      setSelectedEvent(event);
+      return;
     }
+
+    setSelectedEvent(event);
   };
 
   const handleCheckoutAuth = (checkoutInfo) => {
@@ -99,6 +255,14 @@ function App() {
       return;
     }
 
+    if (!authService.canCreateEvents()) {
+      showToast(
+        'Only organizers and admins can create events',
+        'error'
+      );
+      return;
+    }
+
     setCurrentView('create');
   };
 
@@ -107,31 +271,107 @@ function App() {
     refetch();
   };
 
+  const handleLogout = () => {
+    stopReminderSound();
+    shownRemindersRef.current.clear();
+    setUser(null);
+    setCurrentView('all-events');
+    showToast('Logged out successfully', 'info');
+  };
+
+  const handleAuthSuccess = () => {
+    const currentUser = authService.getCurrentUser?.();
+
+    stopReminderSound();
+    shownRemindersRef.current.clear();
+    setUser(currentUser);
+    setShowAuthModal(false);
+    showToast('Welcome to EventSphere!', 'success');
+
+    if (pendingEvent) {
+      if (pendingEvent.eventbriteId && pendingEvent.eventUrl) {
+        window.open(
+          pendingEvent.eventUrl,
+          '_blank',
+          'noopener,noreferrer'
+        );
+      } else {
+        setSelectedEvent(pendingEvent);
+      }
+
+      setPendingEvent(null);
+      return;
+    }
+
+    if (currentUser?.role === 'admin') {
+      setCurrentView('admin-dashboard');
+    } else if (currentUser?.role === 'organizer') {
+      setCurrentView('organizer-dashboard');
+    } else {
+      setCurrentView('all-events');
+    }
+  };
+
+  const handleDeleteEvent = async (event) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${event.name}"?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const token = authService.getToken();
+
+      await eventbriteService.deleteEvent(event.id, token);
+
+      showToast('Event deleted successfully', 'success');
+      refetch();
+    } catch (err) {
+      showToast(
+        err.message || 'Failed to delete event',
+        'error'
+      );
+    }
+  };
+
+  const handleEditEvent = (event) => {
+    showToast('Edit event form will be connected next', 'info');
+    setSelectedEvent(event);
+  };
+
+  const handleAdminDashboardClick = () => {
+    setCurrentView('admin-dashboard');
+  };
+
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? 'app-dark' : ''}`}>
       <NavBar
         onCreateEventClick={handleCreateEventClick}
-        onMyEventsClick={() => setCurrentView('my-events')}
-        onSavedEventsClick={() => setCurrentView('saved-events')}
-        activeSource={activeSource}
-        onSourceChange={handleSourceChange}
-        onLogout={() => showToast('Logged out successfully', 'info')}
-        onAuthSuccess={(action) =>
-          showToast(
-            action === 'login' ? 'Welcome back!' : 'Account created successfully!',
-            'success'
+        onMyEventsClick={() =>
+          setCurrentView(
+            user?.role === 'organizer'
+              ? 'organizer-dashboard'
+              : 'my-events'
           )
         }
+        onSavedEventsClick={() => setCurrentView('saved-events')}
+        onAdminDashboardClick={handleAdminDashboardClick}
+        activeSource={activeSource}
+        onSourceChange={handleSourceChange}
+        onLogout={handleLogout}
+        onAuthSuccess={handleAuthSuccess}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode((prev) => !prev)}
       />
 
       {currentView === 'all-events' && (
         <SearchHero
           onSearch={handleSearch}
           featuredEvent={featuredEvent}
-          previewEvents={previewEvents}
           onExploreClick={scrollToEvents}
           onCategoryClick={handleSourceChange}
           activeSource={activeSource}
+          user={user}
         />
       )}
 
@@ -145,10 +385,45 @@ function App() {
           </div>
         )}
 
+        {currentView === 'admin-dashboard' && (
+          <AdminDashboard
+            onClose={handleBackToAllEvents}
+            onToast={showToast}
+          />
+        )}
+
+        {currentView === 'organizer-dashboard' && (
+          <OrganizerDashboard
+            onClose={handleBackToAllEvents}
+            onCreateEvent={handleCreateEventClick}
+            onEventClick={handleEventClick}
+            onEditEvent={handleEditEvent}
+            onDeleteEvent={handleDeleteEvent}
+            onToast={showToast}
+          />
+        )}
+
+        {currentView === 'analytics' && (
+          <AnalyticsDashboard onClose={handleBackToAllEvents} />
+        )}
+
+        {currentView === 'recommendations' && (
+          <RecommendationsView
+            events={events}
+            savedEvents={[]}
+            onEventClick={handleEventClick}
+            onToast={showToast}
+            onClose={handleBackToAllEvents}
+          />
+        )}
+
         {currentView === 'my-events' && (
           <MyEventsView
             onEventClick={handleEventClick}
             onClose={handleBackToAllEvents}
+            onEditEvent={handleEditEvent}
+            onDeleteEvent={handleDeleteEvent}
+            onToast={showToast}
           />
         )}
 
@@ -156,6 +431,7 @@ function App() {
           <SavedEventsView
             onEventClick={handleEventClick}
             onClose={handleBackToAllEvents}
+            onToast={showToast}
           />
         )}
 
@@ -165,12 +441,19 @@ function App() {
               <div className="discovery-panel__header">
                 <div>
                   <span className="section-eyebrow">Browse by mood</span>
-                  <h2>Find the next event worth leaving the house for.</h2>
+                  <h2>
+                    Find the next event worth leaving the house for.
+                  </h2>
                 </div>
 
-                <button className="create-event-pill" onClick={handleCreateEventClick}>
-                  + Create Event
-                </button>
+                {authService.canCreateEvents() && (
+                  <button
+                    className="create-event-pill"
+                    onClick={handleCreateEventClick}
+                  >
+                    + Create Event
+                  </button>
+                )}
               </div>
 
               <div className="category-strip">
@@ -207,20 +490,39 @@ function App() {
 
             {loading && <Loader />}
 
-            {error && <ErrorState message={error} onRetry={refetch} />}
+            {error && (
+              <ErrorState
+                message={error}
+                onRetry={refetch}
+              />
+            )}
 
             {!loading && !error && events.length === 0 && (
               <EmptyState message="No events found. Try a different search or create your first event!" />
             )}
 
             {!loading && !error && events.length > 0 && (
-              <EventGrid
-                events={events}
-                onEventClick={handleEventClick}
-                onSaveToggle={refetch}
-                onToast={showToast}
-                onCheckoutAuth={handleCheckoutAuth}
-              />
+              <>
+                <EventGrid
+                  events={events}
+                  onEventClick={handleEventClick}
+                  onSaveToggle={refetch}
+                  onToast={showToast}
+                  onCheckoutAuth={handleCheckoutAuth}
+                  onEditEvent={handleEditEvent}
+                  onDeleteEvent={handleDeleteEvent}
+                />
+
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  hasNext={hasNext}
+                  hasPrevious={hasPrevious}
+                  onNext={nextPage}
+                  onPrevious={previousPage}
+                  onPageChange={goToPage}
+                />
+              </>
             )}
           </div>
         )}
@@ -230,8 +532,9 @@ function App() {
         <EventDetails
           eventId={selectedEvent.id}
           eventSource={selectedEvent.source}
-          eventData={selectedEvent.source !== 'local' ? selectedEvent : null}
+          eventData={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          onToast={showToast}
         />
       )}
 
@@ -241,29 +544,7 @@ function App() {
             setShowAuthModal(false);
             setPendingEvent(null);
           }}
-          onSuccess={() => {
-            setShowAuthModal(false);
-            window.dispatchEvent(new CustomEvent('auth-change'));
-            showToast('Welcome back!', 'success');
-
-            if (pendingEvent) {
-              if (pendingEvent.eventbriteId && pendingEvent.eventUrl) {
-                window.open(pendingEvent.eventUrl, '_blank', 'noopener,noreferrer');
-              } else {
-                setSelectedEvent(pendingEvent);
-              }
-
-              setPendingEvent(null);
-            } else {
-              setCurrentView('create');
-              setTimeout(() => {
-                createFormRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                });
-              }, 100);
-            }
-          }}
+          onSuccess={handleAuthSuccess}
         />
       )}
 
@@ -271,7 +552,8 @@ function App() {
         <Toast
           message={toast.message}
           type={toast.type}
-          onClose={() => setToast(null)}
+          persistent={toast.persistent}
+          onClose={handleCloseToast}
         />
       )}
 

@@ -1,28 +1,112 @@
 .eventbrite-checkout-btn {
-  padding: 10px 20px;
-  border-radius: 12px;
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+
   border: none;
-  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  border-radius: 999px;
+
+  padding: 0.95rem 1.6rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f97316,
+      #2563eb
+    );
+
   color: white;
-  font-size: 1rem;
-  font-weight: 600;
+
+  font-size: 0.98rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+
   cursor: pointer;
-  transition: 0.3s ease;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.eventbrite-checkout-btn::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.12),
+      transparent 55%
+    );
+
+  opacity: 0;
+
+  transition: opacity 0.25s ease;
 }
 
 .eventbrite-checkout-btn:hover {
-  background: linear-gradient(135deg, #047857 0%, #0e7490 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 20px 45px rgba(37, 99, 235, 0.24);
+}
+
+.eventbrite-checkout-btn:hover::before {
+  opacity: 1;
+}
+
+.eventbrite-checkout-btn:active {
+  transform: translateY(-1px);
 }
 
 .eventbrite-checkout-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
+
+.eventbrite-checkout-btn:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+  outline-offset: 4px;
+}
+
+/* LARGE VARIANT */
 
 .checkout-btn-large {
   width: 100%;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+
+  padding: 1.15rem 2rem;
+
+  font-size: 1.08rem;
+  border-radius: 24px;
+}
+
+/* DARK MODE */
+
+.app-dark .eventbrite-checkout-btn {
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* MOBILE */
+
+@media (max-width: 640px) {
+  .eventbrite-checkout-btn {
+    width: 100%;
+    padding: 1rem 1.25rem;
+  }
+
+  .checkout-btn-large {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+  }
 }
