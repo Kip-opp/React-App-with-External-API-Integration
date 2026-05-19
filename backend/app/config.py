@@ -30,8 +30,8 @@ class Config:
     # ---------------------------------------------------
 
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "postgresql+psycopg2://kyp:kyp%4010@localhost:5432/events_db"
+         "DATABASE_URL",
+    "sqlite:///events.db"
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
