@@ -22,17 +22,12 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # Enable CORS for frontend development
+    # Enable CORS
     CORS(
         app,
         resources={
             r"/api/*": {
-                "origins": [
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173",
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                ],
+                "origins": Config.CORS_ORIGINS,
                 "methods": [
                     "GET",
                     "POST",
@@ -86,9 +81,7 @@ def create_app():
     from app.routes.user_events import user_events_bp
 
     # Register blueprints
-    app.register_blueprint(
-        health_bp
-    )
+    app.register_blueprint(health_bp)
 
     app.register_blueprint(
         auth_bp,
