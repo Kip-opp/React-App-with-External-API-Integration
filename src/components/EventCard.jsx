@@ -20,12 +20,7 @@ const EventCard = ({
   const currentUser = authService.getCurrentUser?.();
   const role = currentUser?.role;
 
-  const eventId =
-    event.external_event_id ||
-    event.eventbrite_id ||
-    event.ticketmaster_id ||
-    event.id;
-
+  const eventId = event.external_event_id || event.eventbrite_id || event.ticketmaster_id || event.id;
   const source = event.source || 'local';
 
   const isLocal = source === 'local';
@@ -35,10 +30,7 @@ const EventCard = ({
   const canManageEvent =
     currentUser &&
     isLocal &&
-    (
-      role === 'admin' ||
-      Number(event.user_id) === Number(currentUser.id)
-    );
+    (role === 'admin' || Number(event.user_id) === Number(currentUser.id));
 
   useEffect(() => {
     checkIfSaved();
@@ -48,36 +40,23 @@ const EventCard = ({
     if (!authService.isAuthenticated()) return;
 
     try {
-      const result =
-        await savedEventsService.checkIfSaved(
-          eventId,
-          source
-        );
+      const result = await savedEventsService.checkIfSaved(eventId, source);
 
       setIsSaved(result.is_saved);
       setSavedEventId(result.saved_event_id);
-
     } catch (error) {
-
-      console.error(
-        'Error checking saved status:',
-        error
-      );
-
+      console.error('Error checking saved status:', error);
     }
   };
 
   const handleSaveToggle = async (e) => {
-
     e.stopPropagation();
 
     if (!authService.isAuthenticated()) {
-
       if (onToast) {
-        onToast(
-          'Please login to save events',
-          'error'
-        );
+        onToast('Please login to save events', 'error');
+      } else {
+        alert('Please login to save events');
       }
 
       return;
@@ -86,141 +65,101 @@ const EventCard = ({
     setSaving(true);
 
     try {
-
       if (isSaved) {
-
-        await savedEventsService.unsaveEvent(
-          savedEventId
-        );
+        await savedEventsService.unsaveEvent(savedEventId);
 
         setIsSaved(false);
         setSavedEventId(null);
 
+        if (onToast) onToast('Event removed from saved events', 'info');
       } else {
-
-        const result =
-          await savedEventsService.saveEvent(
-            event
-          );
+        const result = await savedEventsService.saveEvent(event);
 
         setIsSaved(true);
+        setSavedEventId(result.saved_event.id);
 
-        setSavedEventId(
-          result.saved_event.id
-        );
-
+        if (onToast) onToast('Event saved successfully', 'success');
       }
 
-      if (onSaveToggle)
-        onSaveToggle();
-
+      if (onSaveToggle) onSaveToggle();
     } catch (error) {
+      console.error('Error toggling save:', error);
 
       if (onToast) {
-
-        onToast(
-          error.message,
-          'error'
-        );
-
+        onToast(error.message || 'Could not update saved event', 'error');
+      } else {
+        alert(error.message);
       }
-
     } finally {
-
       setSaving(false);
-
     }
   };
 
+  const handleCardClick = (e) => {
+    if (
+      e.target.closest('.eventbrite-checkout-btn') ||
+      e.target.closest('.ticketmaster-link-btn') ||
+      e.target.closest('.favorite-btn') ||
+      e.target.closest('.event-card__button') ||
+      e.target.closest('.event-admin-actions')
+    ) {
+      return;
+    }
 
-  // NEW SHARE FUNCTION
-  const handleShareClick =
-    async (e) => {
+    onClick(event);
+  };
 
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+
+    if (onEdit) {
+      onEdit(event);
+    }
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+
+    if (onDelete) {
+      onDelete(event);
+    }
+  };
+
+  const handleShareClick = async (e) => {
     e.stopPropagation();
 
     const shareUrl =
-      event.checkout_url ||
+      checkout_url ||
       event.event_url ||
+      event.url ||
       window.location.href;
 
     try {
-
       if (navigator.share) {
-
         await navigator.share({
-
-          title:
-            event.name,
-
-          text:
-            `Check out ${event.name}`,
-
-          url:
-            shareUrl
-
+          title: name,
+          text: `Check out ${name}`,
+          url: shareUrl,
         });
-
       } else {
-
         await navigator.clipboard.writeText(
           shareUrl
         );
 
         if (onToast) {
-
           onToast(
             'Event link copied!',
             'success'
           );
-
         }
-
       }
-
     } catch (error) {
-
       console.error(
-        'Share failed',
+        'Share failed:',
         error
       );
-
     }
-
   };
-
-
-  const handleCardClick =
-    (e) => {
-
-    if (
-
-      e.target.closest(
-        '.eventbrite-checkout-btn'
-      ) ||
-
-      e.target.closest(
-        '.ticketmaster-link-btn'
-      ) ||
-
-      e.target.closest(
-        '.favorite-btn'
-      ) ||
-
-      e.target.closest(
-        '.event-card__button'
-      )
-
-    ) {
-
-      return;
-
-    }
-
-    onClick(event);
-
-  };
-
 
   const {
     name = 'Untitled Event',
@@ -237,163 +176,174 @@ const EventCard = ({
     min_price,
     max_price,
     currency = 'KES',
+    status,
   } = event;
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Date TBA';
 
-  const formatDate =
-    (dateString) => {
+    const date = new Date(dateString);
 
-    if (!dateString)
-      return 'Date TBA';
+    if (Number.isNaN(date.getTime())) return 'Date TBA';
 
-    return new Date(
-      dateString
-    ).toLocaleDateString(
-      'en-US',
-      {
-
-        weekday:'short',
-        month:'short',
-        day:'numeric',
-        year:'numeric'
-
-      }
-
-    );
-
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   };
 
+  const formatPrice = () => {
+    if (is_free) return 'FREE';
 
-  const formatPrice =
-    () => {
+    if (min_price) {
+      return max_price && max_price !== min_price
+        ? `${currency} ${min_price} - ${max_price}`
+        : `${currency} ${min_price}`;
+    }
 
-    if (is_free)
-      return 'FREE';
-
-    return min_price
-      ? `${currency} ${min_price}`
-      : 'Paid Event';
-
+    return 'Paid Event';
   };
 
+  const placeholderGradients = [
+    'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+    'linear-gradient(135deg, #f97316 0%, #fb7185 100%)',
+    'linear-gradient(135deg, #1d4ed8 0%, #06b6d4 100%)',
+    'linear-gradient(135deg, #111827 0%, #f97316 100%)',
+    'linear-gradient(135deg, #0369a1 0%, #f59e0b 100%)',
+  ];
+
+  const getPlaceholder = () => {
+    const hash = name
+      .split('')
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
+    return placeholderGradients[hash % placeholderGradients.length];
+  };
 
   return (
+    <div className="event-card" onClick={handleCardClick}>
+      <div
+        className="event-card__image"
+        style={!image_url ? { background: getPlaceholder() } : undefined}
+      >
+        {image_url ? (
+          <img src={image_url} alt={name} />
+        ) : (
+          <div className="event-card__placeholder">
+            <span className="placeholder-icon">🎪</span>
+            <span className="placeholder-text">{name}</span>
+          </div>
+        )}
 
-<div
-className="event-card"
-onClick={handleCardClick}
->
+        {category && (
+          <span className="event-card__badge">
+            {category}
+          </span>
+        )}
 
-<div className="event-card__content">
+        {source && (
+          <span className={`source-badge source-${source}`}>
+            {isTicketmaster
+              ? '🎟️ Ticketmaster'
+              : isEventbrite
+                ? '🎫 Eventbrite'
+                : '🏠 Local'}
+          </span>
+        )}
 
-<h3>
+        {status && isLocal && (
+          <span className={`status-badge status-${status}`}>
+            {status}
+          </span>
+        )}
 
-{name}
+        <button
+          className={`favorite-btn ${isSaved ? 'saved' : ''}`}
+          onClick={handleSaveToggle}
+          disabled={saving}
+          title={isSaved ? 'Remove from saved events' : 'Save event'}
+        >
+          {saving ? '…' : isSaved ? '❤️' : '🤍'}
+        </button>
+      </div>
 
-</h3>
+      <div className="event-card__content">
+        <div className="event-card__meta">
+          <span>📅 {formatDate(start_date)}</span>
+          <span>{online_event ? '💻 Online' : '📍 In person'}</span>
+        </div>
 
+        <h3 className="event-card__title">{name}</h3>
 
-<p>
+        <div className="event-card__venue">
+          {online_event ? (
+            <>Online Event</>
+          ) : (
+            <>{venue_name || venue_address || 'Venue TBA'}</>
+          )}
+        </div>
 
-{description}
+        {description && (
+          <p className="event-card__description">
+            {description.length > 115
+              ? `${description.substring(0, 115)}...`
+              : description}
+          </p>
+        )}
 
-</p>
+        <div className="event-card__footer">
+          <span className="event-card__price">
+            {formatPrice()}
+          </span>
 
+          <button
+            className="event-card__button"
+            onClick={handleShareClick}
+          >
+            🔗 Share
+          </button>
 
-<div
-className="event-card__footer"
->
+          {isEventbrite ? (
+            <EventbriteCheckoutButton
+              eventbriteId={eventbrite_id || eventId}
+              eventUrl={checkout_url || event.event_url || event.url}
+              isFree={is_free}
+              className="event-card__button"
+              onRequireAuth={onCheckoutAuth}
+            />
+          ) : isTicketmaster ? (
+            <a
+              href={checkout_url || event.event_url || event.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="event-card__button ticketmaster-link-btn"
+              onClick={(e) => e.stopPropagation()}
+            >
+              View Tickets →
+            </a>
+          ) : (
+            <button className="event-card__button view-details-btn">
+              View Details →
+            </button>
+          )}
+        </div>
 
-<span>
+        {canManageEvent && (
+          <div className="event-admin-actions">
+            <button type="button" onClick={handleEditClick}>
+              Edit
+            </button>
 
-{formatPrice()}
-
-</span>
-
-
-<button
-
-className="event-card__button"
-
-onClick={
-handleShareClick
-}
-
->
-
-🔗 Share
-
-</button>
-
-
-
-{isEventbrite ? (
-
-<EventbriteCheckoutButton
-
-eventbriteId={
-eventbrite_id
-}
-
-eventUrl={
-checkout_url
-}
-
-isFree={
-is_free
-}
-
-/>
-
-) : (
-
-<button
-className="
-event-card__button
-"
->
-
-View Details →
-
-</button>
-
-)}
-
-</div>
-
-
-<button
-
-className={
-`favorite-btn ${
-isSaved
-? 'saved'
-: ''
-}`
-
-}
-
-onClick={
-handleSaveToggle
-}
-
->
-
-{
-isSaved
-? '❤️'
-: '🤍'
-}
-
-</button>
-
-
-</div>
-
-</div>
-
-);
-
+            <button type="button" className="danger" onClick={handleDeleteClick}>
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default EventCard;
