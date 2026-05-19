@@ -10,7 +10,14 @@ const SOURCE_FILTERS = [
   { key: 'ticketmaster', label: 'Ticketmaster', icon: '🎟️' },
 ];
 
-const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activeSource, onSourceChange, onLogout, onAuthSuccess }) => {
+const NavBar = ({
+  onCreateEventClick,
+  onProfileClick,
+  activeSource,
+  onSourceChange,
+  onLogout,
+  onAuthSuccess
+}) => {
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -22,10 +29,13 @@ const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activ
   useEffect(() => {
     syncUser();
     window.addEventListener('auth-change', syncUser);
-    return () => window.removeEventListener('auth-change', syncUser);
+
+    return () => {
+      window.removeEventListener('auth-change', syncUser);
+    };
   }, []);
 
-  // Close dropdown when clicking outside
+  // Close dropdown outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.navbar__user')) {
@@ -34,125 +44,183 @@ const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activ
     };
 
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   const handleLogout = () => {
     setShowUserMenu(false);
     authService.logout();
-    if (onLogout) onLogout();
+
+    if (onLogout) {
+      onLogout();
+    }
   };
 
   const handleCreateClick = () => {
     setShowUserMenu(false);
-    if (onCreateEventClick) onCreateEventClick();
+
+    if (onCreateEventClick) {
+      onCreateEventClick();
+    }
   };
 
-  const handleMyEventsClick = () => {
+  const handleProfileClick = () => {
     setShowUserMenu(false);
-    if (onMyEventsClick) onMyEventsClick();
-  };
 
-  const handleSavedEventsClick = () => {
-    setShowUserMenu(false);
-    if (onSavedEventsClick) onSavedEventsClick();
+    if (onProfileClick) {
+      onProfileClick();
+    }
   };
 
   return (
     <>
       <nav className="navbar">
         <div className="navbar__container">
-          {/* Logo - Left */}
+
+          {/* Logo */}
           <div className="navbar__logo">
             <h1>🎫 EventSphere</h1>
           </div>
 
-          {/* Source Filters - Center */}
+          {/* Filters */}
           {onSourceChange && (
             <div className="navbar__filters">
               {SOURCE_FILTERS.map((filter) => (
                 <button
                   key={filter.key}
-                  className={`navbar__filter-btn ${activeSource === filter.key ? 'active' : ''}`}
+                  className={`navbar__filter-btn ${
+                    activeSource === filter.key ? 'active' : ''
+                  }`}
                   onClick={() => onSourceChange(filter.key)}
                 >
-                  <span className="filter-icon">{filter.icon}</span>
-                  <span className="filter-label">{filter.label}</span>
+                  <span className="filter-icon">
+                    {filter.icon}
+                  </span>
+
+                  <span className="filter-label">
+                    {filter.label}
+                  </span>
                 </button>
               ))}
             </div>
           )}
 
-          {/* Right Section */}
+          {/* Right section */}
           <div className="navbar__right">
-            {/* User Profile or Login Button */}
+
             {user ? (
               <div className="navbar__user">
-                <button 
+
+                <button
                   className="navbar__user-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowUserMenu(!showUserMenu);
                   }}
                 >
-                  <span className="user-avatar">{user.username[0].toUpperCase()}</span>
-                  <span className="user-name">{user.username}</span>
-                  <span className="dropdown-arrow">▾</span>
+                  <span className="user-avatar">
+                    {user.username[0].toUpperCase()}
+                  </span>
+
+                  <span className="user-name">
+                    {user.username}
+                  </span>
+
+                  <span className="dropdown-arrow">
+                    ▾
+                  </span>
                 </button>
 
                 {showUserMenu && (
                   <div className="user-dropdown">
+
                     <div className="user-dropdown__header">
-                      <p className="user-info-name">{user.username}</p>
-                      <p className="user-email">{user.email}</p>
+                      <p className="user-info-name">
+                        {user.username}
+                      </p>
+
+                      <p className="user-email">
+                        {user.email}
+                      </p>
                     </div>
 
+
                     <div className="user-dropdown__menu">
-                      <button onClick={handleCreateClick} className="menu-item">
-                        <span className="menu-icon">➕</span>
+
+                      <button
+                        onClick={handleProfileClick}
+                        className="menu-item"
+                      >
+                        <span className="menu-icon">
+                          👤
+                        </span>
+
+                        Profile Dashboard
+                      </button>
+
+
+                      <button
+                        onClick={handleCreateClick}
+                        className="menu-item"
+                      >
+                        <span className="menu-icon">
+                          ➕
+                        </span>
+
                         Create Event
                       </button>
 
-                      <button onClick={handleMyEventsClick} className="menu-item">
-                        <span className="menu-icon">📅</span>
-                        My Events
-                      </button>
-
-                      <button onClick={handleSavedEventsClick} className="menu-item">
-                        <span className="menu-icon">❤️</span>
-                        Saved Events
-                      </button>
                     </div>
+
 
                     <div className="user-dropdown__footer">
-                      <button onClick={handleLogout} className="logout-btn">
-                        <span className="menu-icon">🚪</span>
+
+                      <button
+                        onClick={handleLogout}
+                        className="logout-btn"
+                      >
+                        <span className="menu-icon">
+                          🚪
+                        </span>
+
                         Logout
                       </button>
+
                     </div>
+
                   </div>
                 )}
+
               </div>
             ) : (
-              <button 
+
+              <button
                 className="navbar__login-btn"
                 onClick={() => setShowAuthModal(true)}
               >
                 Login / Sign Up
               </button>
+
             )}
+
           </div>
         </div>
       </nav>
 
+
       {showAuthModal && (
-        <AuthModal 
+        <AuthModal
           onClose={() => setShowAuthModal(false)}
           onSuccess={() => {
-            const isLogin = true;
             setUser(authService.getCurrentUser());
             setShowAuthModal(false);
-            if (onAuthSuccess) onAuthSuccess(isLogin ? 'login' : 'register');
+
+            if (onAuthSuccess) {
+              onAuthSuccess('login');
+            }
           }}
         />
       )}
