@@ -1,37 +1,27 @@
 .event-details-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(6, 3, 20, 0.78);
-  backdrop-filter: blur(10px);
+  background: rgba(5, 8, 20, 0.76);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1800;
   padding: 1rem;
   overflow-y: auto;
 }
 
 .event-details {
-  background: #fff;
-  border-radius: 30px;
+  background: var(--surface);
+  border-radius: 34px;
   max-width: 980px;
   width: 100%;
   max-height: 92vh;
   overflow-y: auto;
   position: relative;
   box-shadow: 0 35px 110px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
   animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(45px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .event-details .close-btn {
@@ -43,27 +33,41 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
   z-index: 10;
   transition: 0.25s ease;
 }
 
+.app-dark .event-details .close-btn {
+  background: rgba(15, 23, 42, 0.92);
+  color: white;
+}
+
 .event-details .close-btn:hover {
   transform: rotate(90deg) scale(1.05);
 }
 
-.event-source-badge {
+.event-source-badge,
+.event-status-badge {
   position: absolute;
   top: 1rem;
-  right: 4.4rem;
   padding: 0.55rem 0.95rem;
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 900;
   backdrop-filter: blur(10px);
   z-index: 10;
+  text-transform: uppercase;
+}
+
+.event-source-badge {
+  right: 4.4rem;
+}
+
+.event-status-badge {
+  left: 1rem;
 }
 
 .badge-ticketmaster {
@@ -72,7 +76,7 @@
 }
 
 .badge-eventbrite {
-  background: rgba(240, 85, 55, 0.95);
+  background: rgba(249, 115, 22, 0.95);
   color: white;
 }
 
@@ -81,20 +85,35 @@
   color: white;
 }
 
+.status-approved {
+  background: rgba(34, 197, 94, 0.92);
+  color: white;
+}
+
+.status-pending {
+  background: rgba(249, 115, 22, 0.92);
+  color: white;
+}
+
+.status-rejected {
+  background: rgba(239, 68, 68, 0.92);
+  color: white;
+}
+
 .event-details__hero {
   width: 100%;
   height: 430px;
   overflow: hidden;
-  border-radius: 30px 30px 0 0;
+  border-radius: 34px 34px 0 0;
   position: relative;
-  background: linear-gradient(135deg, #2e1065, #7c3aed);
+  background: var(--gradient-main);
 }
 
 .event-details__hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 3, 25, 0.88), transparent 60%);
+  background: linear-gradient(to top, rgba(5, 8, 20, 0.9), transparent 62%);
 }
 
 .event-details__hero img {
@@ -109,7 +128,7 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  background: linear-gradient(135deg, #2e1065, #7c3aed, #ec4899);
+  background: var(--gradient-main);
 }
 
 .event-details__hero--placeholder .placeholder-icon {
@@ -128,23 +147,62 @@
   padding: 2rem;
 }
 
+.event-details__top-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .event-details__category {
   display: inline-flex;
   padding: 0.55rem 1rem;
-  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  background: var(--gradient-main);
   color: white;
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 900;
-  margin-bottom: 1rem;
+}
+
+.details-save-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.details-save-btn.saved {
+  background: rgba(244, 63, 94, 0.12);
+  color: #f43f5e;
 }
 
 .event-details__title {
   font-size: clamp(2rem, 4vw, 3.1rem);
   line-height: 1;
   letter-spacing: -0.06em;
-  margin: 0.8rem 0 1.4rem;
-  color: #111827;
+  margin: 1rem 0 1.2rem;
+  color: var(--text-color);
+  font-weight: 950;
+}
+
+.event-details__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.event-details__summary span {
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  font-weight: 850;
+  font-size: 0.9rem;
 }
 
 .event-details__info {
@@ -153,9 +211,13 @@
   gap: 1rem;
   margin: 2rem 0;
   padding: 1rem;
-  background: #faf7ff;
-  border-radius: 24px;
-  border: 1px solid rgba(124, 58, 237, 0.12);
+  background: rgba(249, 115, 22, 0.05);
+  border-radius: 28px;
+  border: 1px solid var(--border);
+}
+
+.app-dark .event-details__info {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .info-item {
@@ -163,8 +225,9 @@
   gap: 0.85rem;
   align-items: flex-start;
   padding: 1rem;
-  background: white;
-  border-radius: 18px;
+  background: var(--surface);
+  border-radius: 20px;
+  border: 1px solid var(--border);
 }
 
 .info-item .icon {
@@ -174,18 +237,19 @@
 
 .info-item strong {
   display: block;
-  color: #2e1065;
+  color: var(--text-color);
   margin-bottom: 0.35rem;
   font-weight: 900;
 }
 
 .info-item p {
   margin: 0.2rem 0;
-  color: #6b7280;
+  color: var(--muted-text);
+  line-height: 1.6;
 }
 
 .info-item p a {
-  color: #7c3aed;
+  color: #f97316;
   text-decoration: none;
   font-weight: 800;
 }
@@ -198,13 +262,13 @@
 .event-details__description h2,
 .event-details__tickets h2 {
   margin-bottom: 1rem;
-  color: #111827;
+  color: var(--text-color);
   letter-spacing: -0.03em;
 }
 
 .event-details__description p {
   line-height: 1.8;
-  color: #4b5563;
+  color: var(--muted-text);
   white-space: pre-wrap;
 }
 
@@ -220,26 +284,30 @@
   align-items: center;
   gap: 1.2rem;
   padding: 1.3rem;
-  background: #faf7ff;
-  border-radius: 20px;
-  border: 1px solid rgba(124, 58, 237, 0.12);
+  background: rgba(249, 115, 22, 0.05);
+  border-radius: 22px;
+  border: 1px solid var(--border);
+}
+
+.app-dark .ticket-item {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .ticket-info h3 {
   margin: 0 0 0.4rem;
-  color: #111827;
+  color: var(--text-color);
 }
 
 .ticket-info p {
   margin: 0.25rem 0;
-  color: #6b7280;
+  color: var(--muted-text);
   font-size: 0.9rem;
 }
 
 .ticket-availability {
   margin-top: 0.5rem;
   font-size: 0.85rem;
-  color: #7c3aed;
+  color: #2563eb;
   font-weight: 800;
 }
 
@@ -249,7 +317,7 @@
 
 .ticket-price .free,
 .ticket-price .price {
-  color: #7c3aed;
+  color: #f97316;
   font-weight: 950;
   font-size: 1.45rem;
 }
@@ -257,29 +325,29 @@
 .event-details__action {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #eee7ff;
+  border-top: 1px solid var(--border);
 }
 
 .ticketmaster-cta {
   text-align: center;
   padding: 2rem;
   background:
-    radial-gradient(circle at top left, rgba(236,72,153,0.18), transparent 35%),
-    linear-gradient(135deg, #f5f3ff, #fff);
-  border-radius: 24px;
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.16), transparent 35%),
+    rgba(37, 99, 235, 0.05);
+  border-radius: 26px;
 }
 
 .cta-message {
   margin: 0 0 1.5rem;
   font-size: 1.05rem;
-  color: #111827;
+  color: var(--text-color);
   font-weight: 700;
 }
 
 .ticketmaster-button {
   display: inline-flex;
   padding: 1rem 2rem;
-  background: #07051f;
+  background: #17131f;
   color: white;
   text-decoration: none;
   border-radius: 999px;
@@ -295,24 +363,45 @@
 
 .no-checkout-message {
   padding: 1.5rem;
-  background: #faf7ff;
-  border-radius: 18px;
+  background: rgba(249, 115, 22, 0.06);
+  border-radius: 20px;
   text-align: center;
 }
 
 .no-checkout-message p {
   margin: 0;
-  color: #6b7280;
+  color: var(--muted-text);
+}
+
+.event-details-loading,
+.event-details-error {
+  background: var(--surface);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(45px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media (max-width: 768px) {
   .event-details {
-    border-radius: 22px;
+    border-radius: 24px;
   }
 
   .event-details__hero {
     height: 260px;
-    border-radius: 22px 22px 0 0;
+    border-radius: 24px 24px 0 0;
   }
 
   .event-details__content {
@@ -326,5 +415,10 @@
 
   .ticket-price {
     text-align: left;
+  }
+
+  .event-source-badge {
+    right: 1rem;
+    top: 4.8rem;
   }
 }

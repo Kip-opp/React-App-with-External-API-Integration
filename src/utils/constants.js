@@ -1,25 +1,197 @@
-// REGIONS: maps UI labels to Ticketmaster countryCode filter values.
-// Empty countryCode = Global (no filter sent to API).
-// ZA = South Africa (Ticketmaster's supported African market).
-// KE = Kenya (may return empty results — not in TM's documented coverage).
+/**
+ * Regions / locations used throughout EventSphere.
+ * Backend now handles all filtering, so values are simplified.
+ */
 export const REGIONS = [
-  { label: 'Global', value: 'global', countryCode: '' },
-  { label: 'Africa', value: 'africa', countryCode: 'ZA' },
-  { label: 'Kenya', value: 'kenya', countryCode: 'KE' },
-  { label: 'United States', value: 'us', countryCode: 'US' },
-  { label: 'Canada', value: 'ca', countryCode: 'CA' },
-  { label: 'United Kingdom', value: 'gb', countryCode: 'GB' },
-  { label: 'Australia', value: 'au', countryCode: 'AU' },
+  {
+    label: 'All Regions',
+    value: '',
+  },
+
+  {
+    label: 'Kenya',
+    value: 'Kenya',
+  },
+
+  {
+    label: 'Nairobi',
+    value: 'Nairobi',
+  },
+
+  {
+    label: 'Mombasa',
+    value: 'Mombasa',
+  },
+
+  {
+    label: 'Kisumu',
+    value: 'Kisumu',
+  },
+
+  {
+    label: 'South Africa',
+    value: 'South Africa',
+  },
+
+  {
+    label: 'United States',
+    value: 'United States',
+  },
+
+  {
+    label: 'United Kingdom',
+    value: 'United Kingdom',
+  },
+
+  {
+    label: 'Canada',
+    value: 'Canada',
+  },
+
+  {
+    label: 'Australia',
+    value: 'Australia',
+  },
+
+  {
+    label: 'Global',
+    value: 'Global',
+  },
 ];
 
-// CATEGORIES: maps UI labels to Ticketmaster segmentName filter values.
-// Empty segmentName = General (no segment filter sent to API, returns all types).
-// Values must match Ticketmaster's exact segment names — do not rename them.
+/**
+ * Event categories.
+ * These work for Eventbrite, Ticketmaster,
+ * and local platform events.
+ */
 export const CATEGORIES = [
-  { label: 'General', value: 'general', segmentName: '' },
-  { label: 'Music', value: 'music', segmentName: 'Music' },
-  { label: 'Sports', value: 'sports', segmentName: 'Sports' },
-  { label: 'Arts & Theatre', value: 'arts-theatre', segmentName: 'Arts & Theatre' },
-  { label: 'Film', value: 'film', segmentName: 'Film' },
-  { label: 'Miscellaneous', value: 'misc', segmentName: 'Miscellaneous' },
+  {
+    label: 'All Categories',
+    value: '',
+  },
+
+  {
+    label: 'Music',
+    value: 'Music',
+  },
+
+  {
+    label: 'Sports',
+    value: 'Sports',
+  },
+
+  {
+    label: 'Technology',
+    value: 'Technology',
+  },
+
+  {
+    label: 'Business',
+    value: 'Business',
+  },
+
+  {
+    label: 'Education',
+    value: 'Education',
+  },
+
+  {
+    label: 'Arts & Theatre',
+    value: 'Arts & Theatre',
+  },
+
+  {
+    label: 'Film',
+    value: 'Film',
+  },
+
+  {
+    label: 'Food & Drink',
+    value: 'Food & Drink',
+  },
+
+  {
+    label: 'Fashion',
+    value: 'Fashion',
+  },
+
+  {
+    label: 'Networking',
+    value: 'Networking',
+  },
+
+  {
+    label: 'Community',
+    value: 'Community',
+  },
+
+  {
+    label: 'Health & Wellness',
+    value: 'Health & Wellness',
+  },
+
+  {
+    label: 'Gaming',
+    value: 'Gaming',
+  },
+
+  {
+    label: 'Lifestyle',
+    value: 'Lifestyle',
+  },
+
+  {
+    label: 'Miscellaneous',
+    value: 'Miscellaneous',
+  },
 ];
+
+/**
+ * User roles.
+ */
+export const USER_ROLES = {
+  USER: 'user',
+  ORGANIZER: 'organizer',
+  ADMIN: 'admin',
+};
+
+/**
+ * Event statuses.
+ */
+export const EVENT_STATUSES = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  CANCELLED: 'cancelled',
+};
+
+/**
+ * Event sources.
+ */
+export const EVENT_SOURCES = {
+  ALL: 'all',
+  EVENTBRITE: 'eventbrite',
+  TICKETMASTER: 'ticketmaster',
+  LOCAL: 'local',
+};
+
+/**
+ * Organizer access code.
+ * Must match backend config.
+ */
+export const ORGANIZER_ACCESS_CODE =
+  'EVENTSPHERE_ORG_2026';
+
+/**
+ * Pagination defaults.
+ */
+export const PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 12,
+};
+
+/**
+ * Theme storage key.
+ */
+export const DARK_MODE_STORAGE_KEY =
+  'eventsphere_dark_mode';

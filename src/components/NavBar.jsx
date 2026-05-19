@@ -1,132 +1,326 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import authService from '../services/authService';
+
 import AuthModal from './AuthModal';
+
 import './style/Navbar.css';
 
 const SOURCE_FILTERS = [
-  { key: 'all', label: 'All Events', icon: '🌐' },
-  { key: 'local', label: 'Community', icon: '🏠' },
-  { key: 'eventbrite', label: 'Eventbrite', icon: '🎫' },
-  { key: 'ticketmaster', label: 'Ticketmaster', icon: '🎟️' },
+  {
+    key: 'all',
+    label: 'All Events',
+    icon: '🌐',
+  },
+  {
+    key: 'local',
+    label: 'Community',
+    icon: '🏠',
+  },
+  {
+    key: 'eventbrite',
+    label: 'Eventbrite',
+    icon: '🎫',
+  },
+  {
+    key: 'ticketmaster',
+    label: 'Ticketmaster',
+    icon: '🎟️',
+  },
 ];
 
-const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activeSource, onSourceChange, onLogout, onAuthSuccess }) => {
+const NavBar = ({
+  onCreateEventClick,
+  onMyEventsClick,
+  onSavedEventsClick,
+  onAdminDashboardClick,
+  activeSource,
+  onSourceChange,
+  onLogout,
+  onAuthSuccess,
+  darkMode,
+  onToggleDarkMode,
+}) => {
   const [user, setUser] = useState(null);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const [showAuthModal, setShowAuthModal] =
+    useState(false);
+
+  const [showUserMenu, setShowUserMenu] =
+    useState(false);
 
   const syncUser = () => {
-    setUser(authService.getCurrentUser());
+    setUser(
+      authService.getCurrentUser?.()
+    );
   };
 
   useEffect(() => {
     syncUser();
-    window.addEventListener('auth-change', syncUser);
-    return () => window.removeEventListener('auth-change', syncUser);
+
+    window.addEventListener(
+      'auth-change',
+      syncUser
+    );
+
+    return () =>
+      window.removeEventListener(
+        'auth-change',
+        syncUser
+      );
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!e.target.closest('.navbar__user')) {
+      if (
+        !e.target.closest(
+          '.navbar__user'
+        )
+      ) {
         setShowUserMenu(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener(
+      'click',
+      handleClickOutside
+    );
+
+    return () =>
+      document.removeEventListener(
+        'click',
+        handleClickOutside
+      );
   }, []);
+
+  const role = user?.role || 'user';
+
+  const isAdmin = role === 'admin';
+
+  const isOrganizer =
+    role === 'organizer';
+
+  const canCreateEvents =
+    isAdmin || isOrganizer;
 
   const handleLogout = () => {
     setShowUserMenu(false);
+
     authService.logout();
+
     if (onLogout) onLogout();
   };
 
   const handleCreateClick = () => {
     setShowUserMenu(false);
-    if (onCreateEventClick) onCreateEventClick();
+
+    if (onCreateEventClick) {
+      onCreateEventClick();
+    }
   };
 
   const handleMyEventsClick = () => {
     setShowUserMenu(false);
-    if (onMyEventsClick) onMyEventsClick();
+
+    if (onMyEventsClick) {
+      onMyEventsClick();
+    }
   };
 
   const handleSavedEventsClick = () => {
     setShowUserMenu(false);
-    if (onSavedEventsClick) onSavedEventsClick();
+
+    if (onSavedEventsClick) {
+      onSavedEventsClick();
+    }
+  };
+
+  const handleAdminClick = () => {
+    setShowUserMenu(false);
+
+    if (onAdminDashboardClick) {
+      onAdminDashboardClick();
+    }
   };
 
   return (
     <>
       <nav className="navbar">
         <div className="navbar__container">
-          {/* Logo - Left */}
           <div className="navbar__logo">
             <h1>🎫 EventSphere</h1>
+
+            <span className="navbar-tagline">
+              Discover Amazing Events
+            </span>
           </div>
 
-          {/* Source Filters - Center */}
           {onSourceChange && (
             <div className="navbar__filters">
-              {SOURCE_FILTERS.map((filter) => (
-                <button
-                  key={filter.key}
-                  className={`navbar__filter-btn ${activeSource === filter.key ? 'active' : ''}`}
-                  onClick={() => onSourceChange(filter.key)}
-                >
-                  <span className="filter-icon">{filter.icon}</span>
-                  <span className="filter-label">{filter.label}</span>
-                </button>
-              ))}
+              {SOURCE_FILTERS.map(
+                (filter) => (
+                  <button
+                    key={filter.key}
+                    className={`navbar__filter-btn ${
+                      activeSource ===
+                      filter.key
+                        ? 'active'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      onSourceChange(
+                        filter.key
+                      )
+                    }
+                  >
+                    <span className="filter-icon">
+                      {filter.icon}
+                    </span>
+
+                    <span className="filter-label">
+                      {filter.label}
+                    </span>
+                  </button>
+                )
+              )}
             </div>
           )}
 
-          {/* Right Section */}
           <div className="navbar__right">
-            {/* User Profile or Login Button */}
+            <button
+              className="theme-toggle-btn"
+              onClick={
+                onToggleDarkMode
+              }
+              title="Toggle Dark Mode"
+            >
+              {darkMode
+                ? '☀️'
+                : '🌙'}
+            </button>
+
             {user ? (
               <div className="navbar__user">
-                <button 
+                <button
                   className="navbar__user-btn"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowUserMenu(!showUserMenu);
+
+                    setShowUserMenu(
+                      !showUserMenu
+                    );
                   }}
                 >
-                  <span className="user-avatar">{user.username[0].toUpperCase()}</span>
-                  <span className="user-name">{user.username}</span>
-                  <span className="dropdown-arrow">▾</span>
+                  <span className="user-avatar">
+                    {user.username?.[0]?.toUpperCase()}
+                  </span>
+
+                  <div className="user-meta">
+                    <span className="user-name">
+                      {user.username}
+                    </span>
+
+                    <span
+                      className={`user-role role-${role}`}
+                    >
+                      {role}
+                    </span>
+                  </div>
+
+                  <span className="dropdown-arrow">
+                    ▾
+                  </span>
                 </button>
 
                 {showUserMenu && (
                   <div className="user-dropdown">
                     <div className="user-dropdown__header">
-                      <p className="user-info-name">{user.username}</p>
-                      <p className="user-email">{user.email}</p>
+                      <p className="user-info-name">
+                        {
+                          user.username
+                        }
+                      </p>
+
+                      <p className="user-email">
+                        {user.email}
+                      </p>
+
+                      <span
+                        className={`dropdown-role-badge role-${role}`}
+                      >
+                        {role}
+                      </span>
                     </div>
 
                     <div className="user-dropdown__menu">
-                      <button onClick={handleCreateClick} className="menu-item">
-                        <span className="menu-icon">➕</span>
-                        Create Event
-                      </button>
+                      {canCreateEvents && (
+                        <button
+                          onClick={
+                            handleCreateClick
+                          }
+                          className="menu-item"
+                        >
+                          <span className="menu-icon">
+                            ➕
+                          </span>
 
-                      <button onClick={handleMyEventsClick} className="menu-item">
-                        <span className="menu-icon">📅</span>
+                          Create Event
+                        </button>
+                      )}
+
+                      <button
+                        onClick={
+                          handleMyEventsClick
+                        }
+                        className="menu-item"
+                      >
+                        <span className="menu-icon">
+                          📅
+                        </span>
+
                         My Events
                       </button>
 
-                      <button onClick={handleSavedEventsClick} className="menu-item">
-                        <span className="menu-icon">❤️</span>
+                      <button
+                        onClick={
+                          handleSavedEventsClick
+                        }
+                        className="menu-item"
+                      >
+                        <span className="menu-icon">
+                          ❤️
+                        </span>
+
                         Saved Events
                       </button>
+
+                      {isAdmin && (
+                        <button
+                          onClick={
+                            handleAdminClick
+                          }
+                          className="menu-item admin-menu-item"
+                        >
+                          <span className="menu-icon">
+                            🛡️
+                          </span>
+
+                          Admin Dashboard
+                        </button>
+                      )}
                     </div>
 
                     <div className="user-dropdown__footer">
-                      <button onClick={handleLogout} className="logout-btn">
-                        <span className="menu-icon">🚪</span>
+                      <button
+                        onClick={
+                          handleLogout
+                        }
+                        className="logout-btn"
+                      >
+                        <span className="menu-icon">
+                          🚪
+                        </span>
+
                         Logout
                       </button>
                     </div>
@@ -134,9 +328,13 @@ const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activ
                 )}
               </div>
             ) : (
-              <button 
+              <button
                 className="navbar__login-btn"
-                onClick={() => setShowAuthModal(true)}
+                onClick={() =>
+                  setShowAuthModal(
+                    true
+                  )
+                }
               >
                 Login / Sign Up
               </button>
@@ -146,13 +344,26 @@ const NavBar = ({ onCreateEventClick, onMyEventsClick, onSavedEventsClick, activ
       </nav>
 
       {showAuthModal && (
-        <AuthModal 
-          onClose={() => setShowAuthModal(false)}
+        <AuthModal
+          onClose={() =>
+            setShowAuthModal(
+              false
+            )
+          }
           onSuccess={() => {
-            const isLogin = true;
-            setUser(authService.getCurrentUser());
-            setShowAuthModal(false);
-            if (onAuthSuccess) onAuthSuccess(isLogin ? 'login' : 'register');
+            setUser(
+              authService.getCurrentUser?.()
+            );
+
+            setShowAuthModal(
+              false
+            );
+
+            if (
+              onAuthSuccess
+            ) {
+              onAuthSuccess();
+            }
           }}
         />
       )}

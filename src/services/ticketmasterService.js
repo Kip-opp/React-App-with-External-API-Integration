@@ -1,69 +1,67 @@
-// Ticketmaster Discovery API v2 service layer.
-// All HTTP calls to TM live here — no fetch() calls anywhere else in the app.
-// Base URL and API key are loaded from .env (VITE_ prefix required by Vite).
-// API key is passed as ?apikey= query param — TM does not use bearer tokens.
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5000/api';
 
-const BASE_URL = import.meta.env.VITE_TICKETMASTER_BASE_URL;
-const API_KEY = import.meta.env.VITE_TICKETMASTER_API_KEY;
+/**
+ * Ticketmaster data should now come through our Flask backend.
+ * This keeps API keys hidden from the frontend and returns events
+ * in the same format as Eventbrite and local events.
+ */
+class TicketmasterService {
+  async searchEvents({
+    keyword = '',
+    location = '',
+    page = 1,
+    limit = 12,
+  } = {}) {
+    const params = new URLSearchParams({
+      source: 'ticketmaster',
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-// Builds a full TM API URL with the apikey injected.
-// Skips any param whose value is empty, null, or undefined —
-// this is how Global (no countryCode) and General (no segmentName) work.
-function buildUrl(path, params = {}) {
-  const url = new URL(`${BASE_URL}${path}`);
-  url.searchParams.set('apikey', API_KEY);
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      url.searchParams.set(key, value);
+    if (keyword) {
+      params.append('q', keyword);
     }
-  });
 
-  return url.toString();
-}
+    if (location) {
+      params.append('location', location);
+    }
 
-// Throws a descriptive error if TM returns a non-2xx status.
-// Includes the raw response text so the team can see TM's error message.
-async function handleResponse(response) {
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Ticketmaster request failed: ${response.status} - ${text}`);
+    const response = await fetch(
+      `${API_BASE_URL}/events/search?${params.toString()}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch Ticketmaster events');
+    }
+
+    return {
+      events: data.events || [],
+      total: data.total || 0,
+      page: data.page || page,
+      limit: data.limit || limit,
+      total_pages: data.total_pages || 1,
+      has_next: data.has_next || false,
+      has_previous: data.has_previous || false,
+    };
   }
 
-  return response.json();
+  async getEvent(eventId) {
+    const response = await fetch(
+      `${API_BASE_URL}/events/${eventId}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch Ticketmaster event');
+    }
+
+    return data;
+  }
 }
 
-// Fetches paginated events from TM Discovery API /events.json.
-// countryCode and segmentName are optional — omit to fetch globally or across all categories.
-// TM nests results under _embedded.events — always defaults to [] if missing
-// (happens when zero results match or when API returns an error body).
-// pageInfo contains { page, size, totalElements, totalPages } from TM.
-export async function fetchEvents({
-  keyword = '',
-  countryCode = '',
-  segmentName = '',
-  page = 0,
-  size = 12,
-  sort = 'date,asc',
-  startDateTime = '',
-  endDateTime = '',
-}) {
-  const url = buildUrl('/events.json', {
-    ...(keyword ? { keyword } : {}),
-    ...(countryCode ? { countryCode } : {}),
-    ...(segmentName ? { segmentName } : {}),
-    ...(startDateTime ? { startDateTime } : {}),
-    ...(endDateTime ? { endDateTime } : {}),
-    page,
-    size,
-    sort,
-  });
-
-  const response = await fetch(url);
-  const data = await handleResponse(response);
-
-  return {
-    events: data?._embedded?.events ?? [],
-    pageInfo: data?.page ?? {},
-  };
-}
+export default new TicketmasterService();

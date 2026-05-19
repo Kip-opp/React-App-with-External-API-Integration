@@ -1,0 +1,72 @@
+.organizer-dashboard {
+  width: min(1280px, 92%);
+  margin: 2rem auto 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.organizer-dashboard .dashboard-header {
+  width: 100%;
+  margin: 0;
+}
+
+.organizer-dashboard .dashboard-stats {
+  width: 100%;
+  margin: 0;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.organizer-dashboard .filter-buttons {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.organizer-dashboard .filter-buttons button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.1rem;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--text-color);
+  font-weight: 900;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: 0.25s ease;
+}
+
+.app-dark .organizer-dashboard .filter-buttons button {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.organizer-dashboard .filter-buttons button:hover,
+.organizer-dashboard .filter-buttons button.active {
+  background: var(--gradient-main);
+  color: white;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 700px) {
+  .organizer-dashboard {
+    width: 94%;
+  }
+
+  .dashboard-actions {
+    flex-direction: column;
+  }
+
+  .dashboard-actions button {
+    width: 100%;
+  }
+}

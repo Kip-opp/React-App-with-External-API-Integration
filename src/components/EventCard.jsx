@@ -1,23 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import EventbriteCheckoutButton from './EventbriteCheckoutButton';
 import authService from '../services/authService';
 import savedEventsService from '../services/savedEventsService';
 import './style/EventCard.css';
 
-const EventCard = ({ event, onClick, onSaveToggle, onToast, onCheckoutAuth }) => {
+const EventCard = ({
+  event,
+  onClick,
+  onSaveToggle,
+  onToast,
+  onCheckoutAuth,
+  onEdit,
+  onDelete,
+}) => {
   const [isSaved, setIsSaved] = useState(false);
   const [savedEventId, setSavedEventId] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  const currentUser = authService.getCurrentUser?.();
+  const role = currentUser?.role;
+
+  const eventId = event.external_event_id || event.eventbrite_id || event.ticketmaster_id || event.id;
+  const source = event.source || 'local';
+
+  const isLocal = source === 'local';
+  const isTicketmaster = source === 'ticketmaster';
+  const isEventbrite = source === 'eventbrite';
+
+  const canManageEvent =
+    currentUser &&
+    isLocal &&
+    (role === 'admin' || Number(event.user_id) === Number(currentUser.id));
+
   useEffect(() => {
     checkIfSaved();
-  }, [event.id, event.source]);
+  }, [eventId, source]);
 
   const checkIfSaved = async () => {
     if (!authService.isAuthenticated()) return;
-    
+
     try {
-      const result = await savedEventsService.checkIfSaved(event.id, event.source);
+      const result = await savedEventsService.checkIfSaved(eventId, source);
+
       setIsSaved(result.is_saved);
       setSavedEventId(result.saved_event_id);
     } catch (error) {
@@ -27,47 +51,82 @@ const EventCard = ({ event, onClick, onSaveToggle, onToast, onCheckoutAuth }) =>
 
   const handleSaveToggle = async (e) => {
     e.stopPropagation();
-    
+
     if (!authService.isAuthenticated()) {
-      alert('Please login to save events');
+      if (onToast) {
+        onToast('Please login to save events', 'error');
+      } else {
+        alert('Please login to save events');
+      }
+
       return;
     }
 
     setSaving(true);
+
     try {
       if (isSaved) {
         await savedEventsService.unsaveEvent(savedEventId);
+
         setIsSaved(false);
         setSavedEventId(null);
-        if (onToast) onToast('Event removed from saved', 'info');
+
+        if (onToast) onToast('Event removed from saved events', 'info');
       } else {
         const result = await savedEventsService.saveEvent(event);
+
         setIsSaved(true);
         setSavedEventId(result.saved_event.id);
-        if (onToast) onToast('Event saved!', 'success');
+
+        if (onToast) onToast('Event saved successfully', 'success');
       }
-      
+
       if (onSaveToggle) onSaveToggle();
     } catch (error) {
       console.error('Error toggling save:', error);
-      alert(error.message);
+
+      if (onToast) {
+        onToast(error.message || 'Could not update saved event', 'error');
+      } else {
+        alert(error.message);
+      }
     } finally {
       setSaving(false);
     }
   };
 
   const handleCardClick = (e) => {
-    if (e.target.closest('.eventbrite-checkout-btn') || 
-        e.target.closest('.ticketmaster-link-btn') ||
-        e.target.closest('.favorite-btn') ||
-        e.target.closest('.event-card__button')) {
+    if (
+      e.target.closest('.eventbrite-checkout-btn') ||
+      e.target.closest('.ticketmaster-link-btn') ||
+      e.target.closest('.favorite-btn') ||
+      e.target.closest('.event-card__button') ||
+      e.target.closest('.event-admin-actions')
+    ) {
       return;
     }
+
     onClick(event);
   };
 
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+
+    if (onEdit) {
+      onEdit(event);
+    }
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+
+    if (onDelete) {
+      onDelete(event);
+    }
+  };
+
   const {
-    name,
+    name = 'Untitled Event',
     description,
     start_date,
     image_url,
@@ -78,46 +137,61 @@ const EventCard = ({ event, onClick, onSaveToggle, onToast, onCheckoutAuth }) =>
     category,
     eventbrite_id,
     checkout_url,
-    source,
     min_price,
     max_price,
-    currency
+    currency = 'KES',
+    status,
   } = event;
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Date TBA';
+
     const date = new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) return 'Date TBA';
+
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
-  const canCheckout = source === 'eventbrite';
-  const isTicketmaster = source === 'ticketmaster';
-  const isLocal = source === 'local';
+  const formatPrice = () => {
+    if (is_free) return 'FREE';
+
+    if (min_price) {
+      return max_price && max_price !== min_price
+        ? `${currency} ${min_price} - ${max_price}`
+        : `${currency} ${min_price}`;
+    }
+
+    return 'Paid Event';
+  };
 
   const placeholderGradients = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
-    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
+    'linear-gradient(135deg, #0f172a 0%, #2563eb 100%)',
+    'linear-gradient(135deg, #f97316 0%, #fb7185 100%)',
+    'linear-gradient(135deg, #1d4ed8 0%, #06b6d4 100%)',
+    'linear-gradient(135deg, #111827 0%, #f97316 100%)',
+    'linear-gradient(135deg, #0369a1 0%, #f59e0b 100%)',
   ];
 
   const getPlaceholder = () => {
-    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = name
+      .split('')
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
     return placeholderGradients[hash % placeholderGradients.length];
   };
 
   return (
     <div className="event-card" onClick={handleCardClick}>
-      <div className="event-card__image" style={!image_url ? { background: getPlaceholder() } : undefined}>
+      <div
+        className="event-card__image"
+        style={!image_url ? { background: getPlaceholder() } : undefined}
+      >
         {image_url ? (
           <img src={image_url} alt={name} />
         ) : (
@@ -126,71 +200,85 @@ const EventCard = ({ event, onClick, onSaveToggle, onToast, onCheckoutAuth }) =>
             <span className="placeholder-text">{name}</span>
           </div>
         )}
-        {category && <span className="event-card__badge">{category}</span>}
-        {source && (
-          <span className={`source-badge source-${source}`}>
-            {source === 'ticketmaster' ? '🎟️ Ticketmaster' : 
-             source === 'eventbrite' ? '🎫 Eventbrite' : '🏠 Local'}
+
+        {category && (
+          <span className="event-card__badge">
+            {category}
           </span>
         )}
-        
-        {/* Favorite Button */}
-        <button 
+
+        {source && (
+          <span className={`source-badge source-${source}`}>
+            {isTicketmaster
+              ? '🎟️ Ticketmaster'
+              : isEventbrite
+                ? '🎫 Eventbrite'
+                : '🏠 Local'}
+          </span>
+        )}
+
+        {status && isLocal && (
+          <span className={`status-badge status-${status}`}>
+            {status}
+          </span>
+        )}
+
+        <button
           className={`favorite-btn ${isSaved ? 'saved' : ''}`}
           onClick={handleSaveToggle}
           disabled={saving}
-          title={isSaved ? 'Remove from favorites' : 'Save to favorites'}
+          title={isSaved ? 'Remove from saved events' : 'Save event'}
         >
-          {isSaved ? '❤️' : '🤍'}
+          {saving ? '…' : isSaved ? '❤️' : '🤍'}
         </button>
       </div>
-      
+
       <div className="event-card__content">
-        <h3 className="event-card__title">{name}</h3>
-        
-        <div className="event-card__date">
-          📅 {formatDate(start_date)}
+        <div className="event-card__meta">
+          <span>📅 {formatDate(start_date)}</span>
+          <span>{online_event ? '💻 Online' : '📍 In person'}</span>
         </div>
+
+        <h3 className="event-card__title">{name}</h3>
 
         <div className="event-card__venue">
           {online_event ? (
-            <>💻 Online Event</>
+            <>Online Event</>
           ) : (
-            <>📍 {venue_name || venue_address || 'Venue TBA'}</>
+            <>{venue_name || venue_address || 'Venue TBA'}</>
           )}
         </div>
 
         {description && (
           <p className="event-card__description">
-            {description.substring(0, 100)}
-            {description.length > 100 ? '...' : ''}
+            {description.length > 115
+              ? `${description.substring(0, 115)}...`
+              : description}
           </p>
         )}
 
         <div className="event-card__footer">
           <span className="event-card__price">
-            {is_free ? 'FREE' : 
-             min_price ? `${currency} ${min_price} - ${max_price}` :
-             'Paid Event'}
+            {formatPrice()}
           </span>
-          
-          {canCheckout ? (
-            <EventbriteCheckoutButton 
-              eventbriteId={eventbrite_id}
-              eventUrl={checkout_url}
+
+          {isEventbrite ? (
+            <EventbriteCheckoutButton
+              eventbriteId={eventbrite_id || eventId}
+              eventUrl={checkout_url || event.event_url || event.url}
               isFree={is_free}
               className="event-card__button"
               onRequireAuth={onCheckoutAuth}
             />
           ) : isTicketmaster ? (
-            <a 
-              href={checkout_url} 
-              target="_blank" 
+            <a
+              href={checkout_url || event.event_url || event.url}
+              target="_blank"
               rel="noopener noreferrer"
               className="event-card__button ticketmaster-link-btn"
               onClick={(e) => e.stopPropagation()}
             >
-              View on Ticketmaster →
+              View Tickets →
             </a>
           ) : (
             <button className="event-card__button view-details-btn">
@@ -198,6 +286,18 @@ const EventCard = ({ event, onClick, onSaveToggle, onToast, onCheckoutAuth }) =>
             </button>
           )}
         </div>
+
+        {canManageEvent && (
+          <div className="event-admin-actions">
+            <button type="button" onClick={handleEditClick}>
+              Edit
+            </button>
+
+            <button type="button" className="danger" onClick={handleDeleteClick}>
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,31 +1,43 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import authService from '../services/authService';
 import './style/EventbriteCheckoutButton.css';
 
 const generateId = (eventbriteId, eventUrl) => {
   let hash = 0;
+
   const str = String(eventbriteId || eventUrl || '');
+
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) - hash) + str.charCodeAt(i);
     hash |= 0;
   }
+
   return `eb-widget-${Math.abs(hash).toString(36)}`;
 };
 
 const scriptLoadStarted = new Set();
-const isHttps = window.location.protocol === 'https:';
 
 const EventbriteCheckoutButton = ({
   eventbriteId,
   eventUrl,
   isFree = false,
   className = '',
-  onRequireAuth
+  onRequireAuth,
+  disabled = false,
 }) => {
-  const triggerId = useMemo(() => generateId(eventbriteId, eventUrl), [eventbriteId, eventUrl]);
+  const triggerId = useMemo(
+    () => generateId(eventbriteId, eventUrl),
+    [eventbriteId, eventUrl]
+  );
+
+  const isHttps =
+    typeof window !== 'undefined' &&
+    window.location.protocol === 'https:';
 
   const handleOrderComplete = useCallback(() => {
-    alert('🎉 Ticket purchase successful! Check your email for confirmation.');
+    alert(
+      '🎉 Ticket purchase successful! Check your email for confirmation.'
+    );
   }, []);
 
   useEffect(() => {
@@ -33,16 +45,20 @@ const EventbriteCheckoutButton = ({
 
     const createWidget = () => {
       if (!window.EBWidgets) return;
+
       try {
         window.EBWidgets.createWidget({
           widgetType: 'checkout',
           eventId: eventbriteId,
           modal: true,
           modalTriggerElementId: triggerId,
-          onOrderComplete: handleOrderComplete
+          onOrderComplete: handleOrderComplete,
         });
       } catch (error) {
-        console.error('Error creating Eventbrite widget:', error);
+        console.error(
+          'Error creating Eventbrite widget:',
+          error
+        );
       }
     };
 
@@ -51,23 +67,55 @@ const EventbriteCheckoutButton = ({
       return;
     }
 
-    if (scriptLoadStarted.has(eventbriteId)) return;
+    if (scriptLoadStarted.has(eventbriteId)) {
+      return;
+    }
+
     scriptLoadStarted.add(eventbriteId);
 
     const script = document.createElement('script');
-    script.src = 'https://www.eventbrite.com/static/widgets/eb_widgets.js';
+
+    script.src =
+      'https://www.eventbrite.com/static/widgets/eb_widgets.js';
+
     script.async = true;
+
     script.onload = createWidget;
-    script.onerror = () => console.error('Failed to load Eventbrite widget script');
+
+    script.onerror = () => {
+      console.error(
+        'Failed to load Eventbrite widget script'
+      );
+    };
+
     document.body.appendChild(script);
-  }, [eventbriteId, handleOrderComplete, triggerId]);
+
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, [eventbriteId, handleOrderComplete, isHttps, triggerId]);
 
   const handleClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
 
+    if (disabled) return;
+
     if (!authService.isAuthenticated()) {
-      onRequireAuth({ eventbriteId, eventUrl, isFree });
+      if (onRequireAuth) {
+        onRequireAuth({
+          eventbriteId,
+          eventUrl,
+          isFree,
+        });
+      } else {
+        alert(
+          'Please login or create an account to continue.'
+        );
+      }
+
       return;
     }
 
@@ -76,20 +124,31 @@ const EventbriteCheckoutButton = ({
     }
 
     if (eventUrl) {
-      window.open(eventUrl, '_blank', 'noopener,noreferrer');
+      window.open(
+        eventUrl,
+        '_blank',
+        'noopener,noreferrer'
+      );
     } else {
-      alert('Checkout is not available for this event');
+      alert(
+        'Checkout is not available for this event.'
+      );
     }
   };
 
   return (
     <button
       id={triggerId}
+      type="button"
       className={`eventbrite-checkout-btn ${className}`}
       onClick={handleClick}
-      type="button"
+      disabled={disabled}
     >
-      {isFree ? '🎟️ Register Free' : '🎫 Buy Tickets'}
+      {disabled
+        ? 'Unavailable'
+        : isFree
+          ? '🎟️ Register Free'
+          : '🎫 Buy Tickets'}
     </button>
   );
 };
