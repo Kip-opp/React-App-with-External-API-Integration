@@ -125,6 +125,42 @@ const EventCard = ({
     }
   };
 
+  const handleShareClick = async (e) => {
+    e.stopPropagation();
+
+    const shareUrl =
+      checkout_url ||
+      event.event_url ||
+      event.url ||
+      window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: name,
+          text: `Check out ${name}`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
+
+        if (onToast) {
+          onToast(
+            'Event link copied!',
+            'success'
+          );
+        }
+      }
+    } catch (error) {
+      console.error(
+        'Share failed:',
+        error
+      );
+    }
+  };
+
   const {
     name = 'Untitled Event',
     description,
@@ -261,6 +297,13 @@ const EventCard = ({
           <span className="event-card__price">
             {formatPrice()}
           </span>
+
+          <button
+            className="event-card__button"
+            onClick={handleShareClick}
+          >
+            🔗 Share
+          </button>
 
           {isEventbrite ? (
             <EventbriteCheckoutButton
