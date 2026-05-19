@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './style/SearchHero.css';
 
 const backgroundImages = [
@@ -18,13 +18,15 @@ const categoryPills = [
 const SearchHero = ({
   onSearch,
   featuredEvent,
-  previewEvents = [],
   onExploreClick,
   onCategoryClick,
   activeSource,
+  user,
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const role = user?.role || 'guest';
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,7 +38,25 @@ const SearchHero = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(searchValue);
+    onSearch(searchValue.trim());
+  };
+
+  const getHeroTitle = () => {
+    if (role === 'admin') return 'Manage, approve, and grow every event experience.';
+    if (role === 'organizer') return 'Create events your audience will remember.';
+    return 'Discover events that match your energy.';
+  };
+
+  const getHeroSubtitle = () => {
+    if (role === 'admin') {
+      return 'Review community events, monitor platform activity, and keep EventSphere organized from one central experience.';
+    }
+
+    if (role === 'organizer') {
+      return 'Submit events, track approval status, manage tickets, and reach people looking for unforgettable experiences.';
+    }
+
+    return 'Search concerts, festivals, community meetups, and unforgettable live experiences from Eventbrite, Ticketmaster, and local creators.';
   };
 
   return (
@@ -53,15 +73,18 @@ const SearchHero = ({
 
       <div className="search-hero__content">
         <div className="hero-copy">
-          <span className="hero-kicker">EventSphere Live</span>
+          <span className="hero-kicker">
+            {role === 'guest'
+              ? 'EventSphere Live'
+              : `${role} dashboard`}
+          </span>
 
           <h1 className="search-hero__title">
-            Discover events that match your energy.
+            {getHeroTitle()}
           </h1>
 
           <p className="search-hero__subtitle">
-            Search concerts, festivals, community meetups, and unforgettable live
-            experiences from Eventbrite, Ticketmaster, and local creators.
+            {getHeroSubtitle()}
           </p>
 
           <form className="search-hero__form" onSubmit={handleSubmit}>
@@ -99,10 +122,12 @@ const SearchHero = ({
               <strong>3</strong>
               <span>Event sources</span>
             </div>
+
             <div>
-              <strong>24/7</strong>
-              <span>Discovery</span>
+              <strong>Roles</strong>
+              <span>User / Organizer / Admin</span>
             </div>
+
             <div>
               <strong>Save</strong>
               <span>Your favourites</span>
@@ -126,8 +151,16 @@ const SearchHero = ({
             </div>
 
             <div className="phone-card__body">
-              <span className="phone-tag">Featured tonight</span>
-              <h3>{featuredEvent?.name || 'Music Festival'}</h3>
+              <span className="phone-tag">
+                {role === 'admin'
+                  ? 'Platform overview'
+                  : role === 'organizer'
+                    ? 'Organizer tools'
+                    : 'Featured event'}
+              </span>
+
+              <h3>{featuredEvent?.name || 'Featured Event'}</h3>
+
               <p>
                 {featuredEvent?.venue_name ||
                   featuredEvent?.venue_address ||
@@ -139,8 +172,6 @@ const SearchHero = ({
               </button>
             </div>
           </div>
-
-        
         </aside>
       </div>
 

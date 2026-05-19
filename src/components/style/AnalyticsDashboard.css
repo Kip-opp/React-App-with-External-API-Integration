@@ -1,0 +1,51 @@
+.analytics-dashboard {
+  width: min(1280px, 92%);
+  margin: 2rem auto 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analytics-dashboard .dashboard-header {
+  width: 100%;
+  margin: 0;
+}
+
+.analytics-dashboard .dashboard-stats {
+  width: 100%;
+  margin: 0;
+}
+
+.analytics-dashboard .dashboard-card {
+  width: 100%;
+  margin: 0;
+}
+
+.analytics-dashboard pre {
+  max-height: 420px;
+  overflow: auto;
+  border-radius: 22px;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1.25rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.analytics-dashboard h2 {
+  margin: 0 0 1rem;
+  color: var(--text-color);
+  font-size: 1.4rem;
+  letter-spacing: -0.04em;
+}
+
+.analytics-dashboard p {
+  color: var(--muted-text);
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .analytics-dashboard {
+    width: 94%;
+  }
+}

@@ -1,148 +1,163 @@
 .event-card {
   position: relative;
-  background: #ffffff;
-  border-radius: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--surface);
+
+  border-radius: 32px;
+
   overflow: hidden;
-  box-shadow: 0 18px 45px rgba(17, 24, 39, 0.09);
-  transition: 0.3s ease;
-  border: 1px solid rgba(124, 58, 237, 0.08);
+
+  border: 1px solid var(--border);
+
+  box-shadow: var(--shadow);
+
+  transition:
+    transform 0.32s ease,
+    box-shadow 0.32s ease,
+    border-color 0.25s ease;
+
+  isolation: isolate;
+}
+
+.event-card::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.02),
+      transparent 40%
+    );
+
+  pointer-events: none;
+
+  z-index: 1;
 }
 
 .event-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 28px 70px rgba(17, 24, 39, 0.14);
+  transform: translateY(-10px);
+
+  box-shadow:
+    0 35px 80px rgba(15, 23, 42, 0.16);
+
+  border-color: rgba(249, 115, 22, 0.18);
 }
+
+.app-dark .event-card:hover {
+  box-shadow:
+    0 35px 80px rgba(0, 0, 0, 0.42);
+}
+
+/* IMAGE */
 
 .event-card__image {
   position: relative;
-  height: 280px;
+
+  height: 290px;
+
   overflow: hidden;
-  background: linear-gradient(135deg, #2e1065, #7c3aed);
+
+  background:
+    linear-gradient(
+      135deg,
+      #f97316,
+      #2563eb
+    );
 }
 
 .event-card__image::after {
   content: "";
+
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(15, 5, 36, 0.75), transparent 62%);
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(5, 8, 20, 0.88),
+      transparent 65%
+    );
+
   pointer-events: none;
 }
 
 .event-card__image img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
+  transition:
+    transform 0.5s ease,
+    filter 0.35s ease;
 }
+
+.event-card:hover .event-card__image img {
+  transform: scale(1.05);
+}
+
+/* PLACEHOLDER */
 
 .event-card__placeholder {
   height: 100%;
+
   display: grid;
   place-items: center;
+
   text-align: center;
+
   padding: 1rem;
+
   color: white;
 }
 
 .placeholder-icon {
-  font-size: 3rem;
+  font-size: 3.2rem;
+  margin-bottom: 0.5rem;
 }
 
 .placeholder-text {
-  font-weight: 900;
   font-size: 1.15rem;
-}
-
-.event-card__content {
-  padding: 1.4rem;
-}
-
-.event-card__title {
-  font-size: 1.25rem;
-  line-height: 1.25;
-  margin: 0 0 1rem;
-  color: #111827;
+  font-weight: 900;
   letter-spacing: -0.03em;
 }
 
-.event-card__date,
-.event-card__venue,
-.event-card__online {
-  margin: 0 0 0.6rem;
-  color: #6b7280;
-  font-size: 0.92rem;
-}
-
-.event-card__online {
-  color: #7c3aed;
-  font-weight: 800;
-}
-
-.event-card__description {
-  margin: 1rem 0;
-  color: #4b5563;
-  line-height: 1.55;
-  font-size: 0.92rem;
-}
-
-.event-card__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.8rem;
-  margin-top: 1.25rem;
-}
-
-.event-card__price {
-  font-weight: 900;
-  color: #2e1065;
-  font-size: 0.95rem;
-}
-
-.event-card__button,
-.ticketmaster-link-btn {
-  padding: 0.78rem 1.1rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #7c3aed, #ec4899);
-  color: white;
-  border: none;
-  font-weight: 850;
-  cursor: pointer;
-  transition: 0.25s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.event-card__button:hover,
-.ticketmaster-link-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 25px rgba(124, 58, 237, 0.25);
-}
-
-.view-details-btn {
-  background: #07051f;
-}
+/* BADGES */
 
 .source-badge {
   position: absolute;
-  top: 0.85rem;
-  left: 0.85rem;
-  padding: 0.45rem 0.8rem;
+
+  top: 1rem;
+  left: 1rem;
+
+  padding: 0.5rem 0.85rem;
+
   border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 900;
-  backdrop-filter: blur(10px);
-  z-index: 2;
+
+  font-size: 0.72rem;
+  font-weight: 950;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  backdrop-filter: blur(12px);
+
+  z-index: 3;
 }
 
 .source-ticketmaster {
-  background: rgba(37, 99, 235, 0.9);
+  background: rgba(37, 99, 235, 0.92);
   color: white;
 }
 
 .source-eventbrite {
-  background: rgba(240, 85, 55, 0.92);
+  background: rgba(249, 115, 22, 0.92);
   color: white;
 }
 
@@ -151,24 +166,47 @@
   color: white;
 }
 
+/* FAVORITE */
+
 .favorite-btn {
   position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  width: 44px;
-  height: 44px;
+
+  top: 1rem;
+  right: 1rem;
+
+  width: 46px;
+  height: 46px;
+
   border-radius: 50%;
+
   border: none;
-  background: rgba(255, 255, 255, 0.92);
+
+  background: rgba(255,255,255,0.92);
+
   backdrop-filter: blur(12px);
+
   cursor: pointer;
+
   font-size: 1.35rem;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: 0.22s ease;
-  z-index: 3;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+
+  z-index: 4;
+
+  transition:
+    transform 0.22s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.14);
+}
+
+.app-dark .favorite-btn {
+  background: rgba(15, 23, 42, 0.92);
+  color: white;
 }
 
 .favorite-btn:hover {
@@ -176,19 +214,173 @@
 }
 
 .favorite-btn.saved {
-  animation: heartBeat 0.3s ease;
+  animation: heartBeat 0.32s ease;
+}
+
+.favorite-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 @keyframes heartBeat {
   0%, 100% {
     transform: scale(1);
   }
+
   50% {
-    transform: scale(1.22);
+    transform: scale(1.18);
   }
 }
 
-.favorite-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* CONTENT */
+
+.event-card__content {
+  padding: 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.event-card__title {
+  margin: 0 0 1rem;
+
+  color: var(--text-color);
+
+  font-size: 1.35rem;
+  line-height: 1.25;
+
+  letter-spacing: -0.04em;
+
+  font-weight: 900;
+}
+
+.event-card__date,
+.event-card__venue,
+.event-card__online {
+  margin: 0 0 0.65rem;
+
+  font-size: 0.92rem;
+
+  color: var(--muted-text);
+
+  font-weight: 600;
+}
+
+.event-card__online {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.event-card__description {
+  margin: 1rem 0;
+
+  color: var(--muted-text);
+
+  line-height: 1.65;
+
+  font-size: 0.93rem;
+
+  flex: 1;
+}
+
+/* FOOTER */
+
+.event-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 0.8rem;
+
+  margin-top: 1.2rem;
+}
+
+.event-card__price {
+  font-size: 0.96rem;
+  font-weight: 950;
+
+  color: #f97316;
+}
+
+/* BUTTONS */
+
+.event-card__button,
+.ticketmaster-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 999px;
+
+  padding: 0.8rem 1.15rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f97316,
+      #2563eb
+    );
+
+  color: white;
+
+  font-size: 0.92rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.event-card__button:hover,
+.ticketmaster-link-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 18px 35px rgba(37, 99, 235, 0.24);
+}
+
+.view-details-btn {
+  background: #17131f;
+}
+
+.app-dark .view-details-btn {
+  background: #1e293b;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .event-card__image {
+    height: 240px;
+  }
+
+  .event-card__content {
+    padding: 1.25rem;
+  }
+
+  .event-card__title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .event-card {
+    border-radius: 26px;
+  }
+
+  .event-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .event-card__button,
+  .ticketmaster-link-btn {
+    width: 100%;
+  }
 }

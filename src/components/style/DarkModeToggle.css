@@ -1,0 +1,103 @@
+.darkmode-toggle {
+  position: relative;
+
+  width: 72px;
+  height: 38px;
+
+  border: none;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f97316,
+      #2563eb
+    );
+
+  cursor: pointer;
+
+  padding: 0;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.darkmode-toggle:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 28px rgba(37, 99, 235, 0.22);
+}
+
+.darkmode-toggle-track {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  overflow: hidden;
+}
+
+.darkmode-toggle-thumb {
+  position: absolute;
+
+  top: 4px;
+  left: 4px;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.95rem;
+
+  box-shadow:
+    0 6px 18px rgba(15, 23, 42, 0.2);
+
+  transition:
+    transform 0.28s ease,
+    background 0.25s ease;
+}
+
+.darkmode-toggle.dark .darkmode-toggle-thumb {
+  transform: translateX(34px);
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.darkmode-toggle-icon {
+  line-height: 1;
+  user-select: none;
+}
+
+.darkmode-toggle:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+  outline-offset: 4px;
+}
+
+/* MOBILE */
+
+@media (max-width: 640px) {
+  .darkmode-toggle {
+    width: 66px;
+    height: 36px;
+  }
+
+  .darkmode-toggle-thumb {
+    width: 28px;
+    height: 28px;
+  }
+
+  .darkmode-toggle.dark .darkmode-toggle-thumb {
+    transform: translateX(30px);
+  }
+}

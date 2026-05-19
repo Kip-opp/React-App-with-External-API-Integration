@@ -1,0 +1,306 @@
+.reminder-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(5, 8, 20, 0.76);
+
+  backdrop-filter: blur(12px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2200;
+
+  padding: 1rem;
+}
+
+.reminder-modal {
+  width: min(520px, 100%);
+
+  background: var(--surface);
+
+  border-radius: 34px;
+
+  border: 1px solid var(--border);
+
+  box-shadow:
+    0 35px 100px rgba(0, 0, 0, 0.32);
+
+  overflow: hidden;
+
+  animation: reminderModalIn 0.28s ease;
+}
+
+.reminder-modal__header {
+  padding: 1.6rem 1.8rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(249, 115, 22, 0.1),
+      rgba(37, 99, 235, 0.08)
+    );
+
+  border-bottom: 1px solid var(--border);
+}
+
+.app-dark .reminder-modal__header {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(249, 115, 22, 0.12),
+      rgba(37, 99, 235, 0.1)
+    );
+}
+
+.reminder-modal__header h2 {
+  margin: 0 0 0.45rem;
+
+  color: var(--text-color);
+
+  font-size: 1.8rem;
+
+  letter-spacing: -0.05em;
+
+  font-weight: 950;
+}
+
+.reminder-modal__header p {
+  margin: 0;
+
+  color: var(--muted-text);
+
+  line-height: 1.6;
+}
+
+.reminder-modal__close {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.9);
+
+  cursor: pointer;
+
+  font-size: 1.3rem;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.app-dark .reminder-modal__close {
+  background: rgba(15, 23, 42, 0.92);
+  color: white;
+}
+
+.reminder-modal__close:hover {
+  transform: rotate(90deg);
+}
+
+.reminder-modal__body {
+  padding: 1.8rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reminder-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.reminder-form-group label {
+  color: var(--text-color);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+}
+
+.reminder-form-group input,
+.reminder-form-group textarea,
+.reminder-form-group select {
+  width: 100%;
+
+  padding: 1rem;
+
+  border-radius: 18px;
+
+  border: 1.5px solid rgba(85, 54, 34, 0.08);
+
+  background: rgba(255,255,255,0.85);
+
+  color: var(--text-color);
+
+  font-size: 0.96rem;
+
+  font-family: inherit;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.app-dark .reminder-form-group input,
+.app-dark .reminder-form-group textarea,
+.app-dark .reminder-form-group select {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(255,255,255,0.08);
+}
+
+.reminder-form-group textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.reminder-form-group input:focus,
+.reminder-form-group textarea:focus,
+.reminder-form-group select:focus {
+  outline: none;
+
+  border-color: #f97316;
+
+  box-shadow:
+    0 0 0 4px rgba(249, 115, 22, 0.12);
+}
+
+.reminder-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+
+  padding: 1rem 1.1rem;
+
+  border-radius: 20px;
+
+  background: rgba(249, 115, 22, 0.06);
+
+  border: 1px solid rgba(249, 115, 22, 0.08);
+
+  cursor: pointer;
+
+  color: var(--text-color);
+
+  font-weight: 800;
+}
+
+.app-dark .reminder-checkbox {
+  background: rgba(255,255,255,0.04);
+}
+
+.reminder-checkbox input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: #f97316;
+}
+
+/* ACTIONS */
+
+.reminder-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+
+  margin-top: 0.5rem;
+}
+
+.reminder-btn-cancel,
+.reminder-btn-save {
+  border: none;
+
+  padding: 0.95rem 1.4rem;
+
+  border-radius: 999px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.reminder-btn-cancel {
+  background: rgba(15, 23, 42, 0.06);
+
+  color: var(--text-color);
+}
+
+.app-dark .reminder-btn-cancel {
+  background: rgba(255,255,255,0.08);
+}
+
+.reminder-btn-cancel:hover {
+  transform: translateY(-2px);
+}
+
+.reminder-btn-save {
+  background: var(--gradient-main);
+
+  color: white;
+}
+
+.reminder-btn-save:hover:not(:disabled) {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 18px 35px rgba(37, 99, 235, 0.22);
+}
+
+.reminder-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ANIMATION */
+
+@keyframes reminderModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 640px) {
+  .reminder-modal {
+    border-radius: 26px;
+  }
+
+  .reminder-modal__header,
+  .reminder-modal__body {
+    padding: 1.3rem;
+  }
+
+  .reminder-modal__actions {
+    flex-direction: column;
+  }
+
+  .reminder-btn-cancel,
+  .reminder-btn-save {
+    width: 100%;
+  }
+}
