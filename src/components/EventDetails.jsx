@@ -4,7 +4,9 @@ import authService from '../services/authService';
 import savedEventsService from '../services/savedEventsService';
 import './style/EventDetails.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5000/api';
 
 const EventDetails = ({ eventId, eventSource, eventData, onClose, onToast }) => {
   const [event, setEvent] = useState(eventData);

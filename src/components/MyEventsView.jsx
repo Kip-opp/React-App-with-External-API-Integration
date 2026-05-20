@@ -122,100 +122,52 @@ const MyEventsView = ({
         >
           ← Back to Events
         </button>
-      </div>
+       </div>
 
-      {!loading && !error && (
-        <div className="events-stats">
-          <div className="stat-card">
-            <h3>{stats.total}</h3>
-            <p>Total Events</p>
-          </div>
+       {/* Stats row: clickable cards with active state */}
+       <div className="dashboard-stats">
+         <div
+           className={`stat-box ${statusFilter === 'all' ? 'stat-box-active' : ''}`}
+           onClick={() => setStatusFilter('all')}
+         >
+           <p className="stat-label">All</p>
+           <div className="stat-square">
+             <h3>{stats.total}</h3>
+           </div>
+         </div>
 
-          <div className="stat-card approved">
-            <h3>{stats.approved}</h3>
-            <p>Approved</p>
-          </div>
+         <div
+           className={`stat-box ${statusFilter === 'approved' ? 'stat-box-active' : ''}`}
+           onClick={() => setStatusFilter('approved')}
+         >
+           <p className="stat-label">Approved</p>
+           <div className="stat-square">
+             <h3>{stats.approved}</h3>
+           </div>
+         </div>
 
-          <div className="stat-card pending">
-            <h3>{stats.pending}</h3>
-            <p>Pending</p>
-          </div>
+         <div
+           className={`stat-box ${statusFilter === 'pending' ? 'stat-box-active' : ''}`}
+           onClick={() => setStatusFilter('pending')}
+         >
+           <p className="stat-label">Pending</p>
+           <div className="stat-square">
+             <h3>{stats.pending}</h3>
+           </div>
+         </div>
 
-          <div className="stat-card rejected">
-            <h3>{stats.rejected}</h3>
-            <p>Rejected</p>
-          </div>
-        </div>
-      )}
+         <div
+           className={`stat-box ${statusFilter === 'rejected' ? 'stat-box-active' : ''}`}
+           onClick={() => setStatusFilter('rejected')}
+         >
+           <p className="stat-label">Rejected</p>
+           <div className="stat-square">
+             <h3>{stats.rejected}</h3>
+           </div>
+         </div>
+       </div>
 
-      {!loading && !error && (
-        <div className="events-toolbar">
-          <div className="filter-buttons">
-            <button
-              className={
-                statusFilter === 'all'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setStatusFilter('all')
-              }
-            >
-              All
-            </button>
-
-            <button
-              className={
-                statusFilter ===
-                'approved'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setStatusFilter(
-                  'approved'
-                )
-              }
-            >
-              Approved
-            </button>
-
-            <button
-              className={
-                statusFilter ===
-                'pending'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setStatusFilter(
-                  'pending'
-                )
-              }
-            >
-              Pending
-            </button>
-
-            <button
-              className={
-                statusFilter ===
-                'rejected'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setStatusFilter(
-                  'rejected'
-                )
-              }
-            >
-              Rejected
-            </button>
-          </div>
-        </div>
-      )}
-
-      {loading && (
+       {loading && (
         <StateViews.Loading />
       )}
 

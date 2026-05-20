@@ -80,8 +80,6 @@ const EventCard = ({
 
         if (onToast) onToast('Event saved successfully', 'success');
       }
-
-      if (onSaveToggle) onSaveToggle();
     } catch (error) {
       console.error('Error toggling save:', error);
 

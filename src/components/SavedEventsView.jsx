@@ -197,7 +197,6 @@ const SavedEventsView = ({
                 events={[event]}
                 onEventClick={onEventClick}
                 onToast={onToast}
-                onSaveToggle={fetchSavedEvents}
                 onDeleteEvent={handleRemoveSaved}
               />
 

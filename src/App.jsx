@@ -17,6 +17,7 @@ import AdminDashboard from './components/AdminDashboard';
 import OrganizerDashboard from './components/OrganizerDashboard';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import RecommendationsView from './components/RecommendationsView';
+import OrdersView from './components/OrdersView';
 import Pagination from './components/Pagination';
 
 import authService from './services/authService';
@@ -343,6 +344,10 @@ function App() {
     setCurrentView('admin-dashboard');
   };
 
+  const handleTicketsClick = () => {
+    setCurrentView('tickets');
+  };
+
   return (
     <div className={`app ${darkMode ? 'app-dark' : ''}`}>
       <NavBar
@@ -355,6 +360,7 @@ function App() {
           )
         }
         onSavedEventsClick={() => setCurrentView('saved-events')}
+        onTicketsClick={handleTicketsClick}
         onAdminDashboardClick={handleAdminDashboardClick}
         activeSource={activeSource}
         onSourceChange={handleSourceChange}
@@ -433,6 +439,15 @@ function App() {
             onClose={handleBackToAllEvents}
             onToast={showToast}
           />
+        )}
+
+        {currentView === 'tickets' && (
+          <div className="view-shell">
+            <OrdersView
+              onEventClick={handleEventClick}
+              onClose={handleBackToAllEvents}
+            />
+          </div>
         )}
 
         {currentView === 'all-events' && (

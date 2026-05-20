@@ -24,7 +24,7 @@ function EventGrid({
 
   return (
     <section className="events-section">
-      <div className="event-grid">
+      <div className="events-grid">
         {events.map((event) => {
           const eventKey =
             event.external_event_id ||

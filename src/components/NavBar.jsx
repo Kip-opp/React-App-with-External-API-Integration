@@ -33,6 +33,7 @@ const NavBar = ({
   onCreateEventClick,
   onMyEventsClick,
   onSavedEventsClick,
+  onTicketsClick,
   onAdminDashboardClick,
   activeSource,
   onSourceChange,
@@ -140,6 +141,14 @@ const NavBar = ({
 
     if (onAdminDashboardClick) {
       onAdminDashboardClick();
+    }
+  };
+
+  const handleTicketsClick = () => {
+    setShowUserMenu(false);
+
+    if (onTicketsClick) {
+      onTicketsClick();
     }
   };
 
@@ -292,6 +301,19 @@ const NavBar = ({
                         </span>
 
                         Saved Events
+                      </button>
+
+                      <button
+                        onClick={
+                          handleTicketsClick
+                        }
+                        className="menu-item"
+                      >
+                        <span className="menu-icon">
+                          🎟️
+                        </span>
+
+                        My Tickets
                       </button>
 
                       {isAdmin && (

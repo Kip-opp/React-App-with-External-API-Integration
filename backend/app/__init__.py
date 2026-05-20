@@ -27,19 +27,9 @@ def create_app():
         app,
         resources={
             r"/api/*": {
-                "origins": Config.CORS_ORIGINS,
-                "methods": [
-                    "GET",
-                    "POST",
-                    "PUT",
-                    "PATCH",
-                    "DELETE",
-                    "OPTIONS",
-                ],
-                "allow_headers": [
-                    "Content-Type",
-                    "Authorization",
-                ],
+                "origins": Config.CORS_ORIGINS,  # This uses the dynamic list from config.py
+                "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
             }
         },
         supports_credentials=True,
@@ -76,9 +66,11 @@ def create_app():
     from app.routes.auth import auth_bp
     from app.routes.events import events_bp
     from app.routes.health import health_bp
+    from app.routes.orders import orders_bp
     from app.routes.recommendations import recommendations_bp
     from app.routes.saved_events import saved_events_bp
     from app.routes.user_events import user_events_bp
+    from app.routes.admin import admin_bp
 
     # Register blueprints
     app.register_blueprint(health_bp)
@@ -113,7 +105,16 @@ def create_app():
         url_prefix="/api"
     )
 
-    @app.route("/")
+    app.register_blueprint(
+        orders_bp,
+        url_prefix="/api"
+    )
+
+    app.register_blueprint(
+        admin_bp,
+        url_prefix="/api"
+    )
+
     def home():
         return {
             "message": "EventSphere Backend API Running",
