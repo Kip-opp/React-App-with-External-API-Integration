@@ -1,23 +1,17 @@
 .darkmode-toggle {
   position: relative;
-
   width: 72px;
   height: 38px;
-
+  padding: 0;
   border: none;
   border-radius: 999px;
-
   background:
     linear-gradient(
       135deg,
       #f97316,
       #2563eb
     );
-
   cursor: pointer;
-
-  padding: 0;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -25,47 +19,41 @@
 
 .darkmode-toggle:hover {
   transform: translateY(-2px);
-
   box-shadow:
     0 14px 28px rgba(37, 99, 235, 0.22);
 }
 
+.darkmode-toggle:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+  outline-offset: 4px;
+}
+
 .darkmode-toggle-track {
   position: relative;
-
   width: 100%;
   height: 100%;
-
-  border-radius: inherit;
-
   overflow: hidden;
+  border-radius: inherit;
 }
 
 .darkmode-toggle-thumb {
   position: absolute;
-
   top: 4px;
   left: 4px;
-
   width: 30px;
   height: 30px;
-
-  border-radius: 50%;
-
-  background: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
+  border-radius: 50%;
+  background: white;
   font-size: 0.95rem;
-
   box-shadow:
     0 6px 18px rgba(15, 23, 42, 0.2);
-
   transition:
     transform 0.28s ease,
-    background 0.25s ease;
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
 .darkmode-toggle.dark .darkmode-toggle-thumb {
@@ -78,13 +66,6 @@
   line-height: 1;
   user-select: none;
 }
-
-.darkmode-toggle:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.3);
-  outline-offset: 4px;
-}
-
-/* MOBILE */
 
 @media (max-width: 640px) {
   .darkmode-toggle {

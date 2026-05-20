@@ -1,163 +1,119 @@
 .footer {
-  position: relative;
-
   margin-top: 4rem;
-
-  padding: 3rem 1.5rem;
-
-  overflow: hidden;
-
+  padding: 3rem 5vw 1.5rem;
   background:
-    radial-gradient(
-      circle at top left,
-      rgba(249, 115, 22, 0.16),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at top right,
-      rgba(37, 99, 235, 0.16),
-      transparent 28%
-    ),
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.14), transparent 30%),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.16), transparent 30%),
     #111827;
-
   color: white;
 }
 
-.footer::before {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.02),
-      transparent
-    );
-
-  pointer-events: none;
-}
-
 .footer-inner {
-  position: relative;
-
   width: min(1180px, 100%);
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 2fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-
-  text-align: center;
-
-  z-index: 1;
+.footer-brand-section {
+  max-width: 280px;
 }
 
 .footer-brand {
+  margin: 0 0 0.7rem;
   font-size: 1.5rem;
   font-weight: 950;
-
   letter-spacing: -0.04em;
-
-  background:
-    linear-gradient(
-      135deg,
-      #f97316,
-      #60a5fa
-    );
-
+  background: linear-gradient(135deg, #f97316, #60a5fa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.footer-copy {
-  color: rgba(255,255,255,0.72);
-
-  font-size: 0.92rem;
-  font-weight: 500;
-
+.footer-tagline {
+  margin: 0;
+  color: rgba(255,255,255,0.82);
+  font-size: 0.95rem;
   line-height: 1.7;
+  font-weight: 500;
 }
 
 .footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 2rem;
+}
+
+.footer-column {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footer-column h4 {
+  margin: 0 0 0.35rem;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 950;
+}
+
+.footer-column a,
+.footer-column span {
+  color: rgba(255,255,255,0.76);
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.footer-column a:hover {
+  color: #f97316;
+}
+
+.footer-bottom {
+  width: min(1180px, 100%);
+  margin: 2.4rem auto 0;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
   gap: 1rem;
-
-  margin-top: 0.8rem;
-
   flex-wrap: wrap;
 }
 
-.footer-links a {
-  color: rgba(255,255,255,0.8);
-
-  font-size: 0.92rem;
-  font-weight: 700;
-
-  transition:
-    color 0.25s ease,
-    transform 0.25s ease;
+.footer-copy,
+.footer-made {
+  margin: 0;
+  color: rgba(255,255,255,0.62);
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
-.footer-links a:hover {
-  color: #f97316;
-  transform: translateY(-2px);
-}
-
-.footer-socials {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-
-  margin-top: 0.5rem;
-}
-
-.footer-socials a {
-  width: 42px;
-  height: 42px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background: rgba(255,255,255,0.08);
-
-  color: white;
-
-  transition:
-    transform 0.25s ease,
-    background 0.25s ease;
-}
-
-.footer-socials a:hover {
-  transform: translateY(-3px);
-
-  background:
-    linear-gradient(
-      135deg,
-      #f97316,
-      #2563eb
-    );
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 640px) {
-  .footer {
-    padding: 2.5rem 1rem;
+@media (max-width: 850px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .footer-brand {
-    font-size: 1.35rem;
+  .footer-brand-section {
+    max-width: 100%;
   }
 
   .footer-links {
-    gap: 0.8rem;
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .footer {
+    padding: 2.5rem 1.2rem 1.4rem;
+  }
+
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
   }
 }

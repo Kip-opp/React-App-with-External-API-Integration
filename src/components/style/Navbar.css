@@ -2,13 +2,9 @@
   position: sticky;
   top: 0;
   z-index: 120;
-
-  background: rgba(251, 247, 242, 0.82);
-
-  backdrop-filter: blur(18px);
-
   border-bottom: 1px solid var(--border);
-
+  background: rgba(251, 247, 242, 0.82);
+  backdrop-filter: blur(18px);
   transition:
     background 0.3s ease,
     border-color 0.3s ease;
@@ -21,12 +17,10 @@
 .navbar__container {
   width: min(1400px, 100%);
   margin: 0 auto;
-
-  padding: 0.95rem 4rem;
-
   display: flex;
   align-items: center;
   gap: 1.2rem;
+  padding: 0.95rem 4rem;
 }
 
 /* LOGO */
@@ -37,14 +31,10 @@
 
 .navbar__logo h1 {
   margin: 0;
-
+  cursor: pointer;
   font-size: 1.75rem;
   font-weight: 950;
-
   letter-spacing: -0.05em;
-
-  cursor: pointer;
-
   background:
     linear-gradient(
       135deg,
@@ -55,7 +45,6 @@
 
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
   transition: transform 0.25s ease;
 }
 
@@ -63,7 +52,7 @@
   transform: scale(1.02);
 }
 
-/* FILTER BUTTONS */
+/* FILTERS */
 
 .navbar__filters {
   display: flex;
@@ -75,22 +64,14 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-
   padding: 0.72rem 1rem;
-
-  background: rgba(255,255,255,0.72);
-
   border: 1px solid rgba(85, 54, 34, 0.08);
-
   border-radius: 999px;
-
-  cursor: pointer;
-
+  background: rgba(255,255,255,0.72);
   color: var(--text-color);
-
+  cursor: pointer;
   font-size: 0.86rem;
   font-weight: 800;
-
   transition:
     transform 0.25s ease,
     background 0.25s ease,
@@ -106,16 +87,13 @@
 .navbar__filter-btn:hover,
 .navbar__filter-btn.active {
   background: var(--gradient-main);
-
   color: white;
-
   transform: translateY(-2px);
-
   box-shadow:
     0 16px 30px rgba(37, 99, 235, 0.22);
 }
 
-/* RIGHT SECTION */
+/* RIGHT */
 
 .navbar__right {
   display: flex;
@@ -123,23 +101,16 @@
   gap: 0.85rem;
 }
 
-/* LOGIN BUTTON */
+/* LOGIN */
 
 .navbar__login-btn {
-  border: none;
-
   padding: 0.88rem 1.45rem;
-
+  border: none;
   border-radius: 999px;
-
   background: #17131f;
-
   color: white;
-
   font-weight: 900;
-
   cursor: pointer;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -152,7 +123,6 @@
 
 .navbar__login-btn:hover {
   transform: translateY(-2px);
-
   box-shadow:
     0 18px 35px rgba(15, 23, 42, 0.24);
 }
@@ -166,18 +136,12 @@
 .navbar__user-btn {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-
-  padding: 0.5rem 0.8rem;
-
-  background: rgba(255,255,255,0.82);
-
+  gap: 0.9rem;
+  padding: 0.45rem 1rem 0.45rem 0.45rem;
   border: 1px solid rgba(85, 54, 34, 0.08);
-
   border-radius: 999px;
-
+  background: rgba(255,255,255,0.88);
   cursor: pointer;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -185,83 +149,87 @@
 }
 
 .app-dark .navbar__user-btn {
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   border-color: rgba(255,255,255,0.08);
 }
 
 .navbar__user-btn:hover {
   transform: translateY(-2px);
-
   box-shadow:
     0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .user-avatar {
-  width: 38px;
-  height: 38px;
-
-  border-radius: 50%;
-
-  background: var(--gradient-main);
-
-  color: white;
-
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-
+  border-radius: 50%;
+  background:
+    linear-gradient(
+      135deg,
+      #f97316,
+      #2563eb
+    );
+  color: white;
+  font-size: 1rem;
   font-weight: 900;
-
   box-shadow:
     0 10px 20px rgba(37, 99, 235, 0.2);
 }
 
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+}
+
 .user-name {
-  color: var(--text-color);
-
-  font-weight: 800;
-
-  max-width: 120px;
-
+  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.user-role {
+  color: var(--muted-text);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .dropdown-arrow {
-  font-size: 0.75rem;
+  margin-left: 0.2rem;
   color: var(--muted-text);
+  font-size: 0.72rem;
 }
 
 /* DROPDOWN */
 
 .user-dropdown {
   position: absolute;
-
   top: calc(100% + 0.8rem);
   right: 0;
-
   min-width: 290px;
-
-  background: var(--surface);
-
-  border-radius: 28px;
-
-  border: 1px solid var(--border);
-
   overflow: hidden;
-
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
   box-shadow:
     0 28px 70px rgba(15, 23, 42, 0.18);
-
   z-index: 1200;
-
   animation: dropdownSlide 0.22s ease;
 }
 
 .user-dropdown__header {
   padding: 1.5rem;
-
   background:
     linear-gradient(
       135deg,
@@ -272,19 +240,14 @@
 
 .user-info-name {
   margin: 0 0 0.35rem;
-
   color: white;
-
-  font-weight: 900;
-
   font-size: 1rem;
+  font-weight: 900;
 }
 
 .user-email {
   margin: 0;
-
   color: rgba(255,255,255,0.78);
-
   font-size: 0.88rem;
 }
 
@@ -296,24 +259,16 @@
 .menu-item,
 .logout-btn {
   width: 100%;
-
-  padding: 1rem 1.3rem;
-
-  background: none;
-  border: none;
-
-  text-align: left;
-
-  cursor: pointer;
-
   display: flex;
   align-items: center;
   gap: 0.8rem;
-
+  padding: 1rem 1.3rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
   color: var(--text-color);
-
   font-weight: 800;
-
   transition:
     background 0.22s ease,
     padding-left 0.22s ease;
@@ -340,7 +295,6 @@
     opacity: 0;
     transform: translateY(-8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -363,8 +317,12 @@
     font-size: 1.35rem;
   }
 
-  .user-name {
+  .user-meta {
     display: none;
+  }
+
+  .navbar__user-btn {
+    padding-right: 0.7rem;
   }
 }
 

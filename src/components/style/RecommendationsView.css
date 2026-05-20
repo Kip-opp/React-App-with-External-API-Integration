@@ -8,24 +8,19 @@
 
 .recommendation-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
   flex-wrap: wrap;
-
+  gap: 1rem;
   padding: 2rem;
-
+  border: 1px solid var(--border);
   border-radius: 34px;
-
   background:
     linear-gradient(
       145deg,
       rgba(255,255,255,0.9),
       rgba(255,250,245,0.86)
     );
-
-  border: 1px solid var(--border);
-
   box-shadow: var(--shadow);
 }
 
@@ -40,43 +35,28 @@
 
 .recommendation-header h1 {
   margin: 0 0 0.5rem;
-
   color: var(--text-color);
-
   font-size: clamp(2rem, 4vw, 3rem);
-
   line-height: 1;
-
   letter-spacing: -0.06em;
-
   font-weight: 950;
 }
 
 .recommendation-header p {
   margin: 0;
-
   color: var(--muted-text);
-
   line-height: 1.7;
-
   font-weight: 500;
 }
 
 .recommendation-refresh-btn {
-  border: none;
-
-  border-radius: 999px;
-
   padding: 0.95rem 1.4rem;
-
+  border: none;
+  border-radius: 999px;
   background: var(--gradient-main);
-
   color: white;
-
   font-weight: 900;
-
   cursor: pointer;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -84,12 +64,11 @@
 
 .recommendation-refresh-btn:hover {
   transform: translateY(-3px);
-
   box-shadow:
     0 20px 40px rgba(37, 99, 235, 0.24);
 }
 
-/* CATEGORY TAGS */
+/* TAGS */
 
 .recommendation-tags {
   display: flex;
@@ -99,13 +78,9 @@
 
 .recommendation-tag {
   padding: 0.7rem 1rem;
-
   border-radius: 999px;
-
   background: rgba(249, 115, 22, 0.1);
-
   color: #f97316;
-
   font-size: 0.9rem;
   font-weight: 850;
 }
@@ -114,54 +89,39 @@
   background: rgba(249, 115, 22, 0.16);
 }
 
-/* EMPTY STATE */
+/* EMPTY */
 
 .recommendation-empty {
   padding: 5rem 2rem;
-
-  text-align: center;
-
-  background: var(--surface);
-
-  border-radius: 34px;
-
   border: 1px solid var(--border);
-
+  border-radius: 34px;
+  background: var(--surface);
+  text-align: center;
   box-shadow: var(--shadow);
 }
 
 .recommendation-empty h2 {
   margin-bottom: 1rem;
-
   color: var(--text-color);
-
   font-size: 2rem;
-
   letter-spacing: -0.04em;
 }
 
 .recommendation-empty p {
   max-width: 620px;
-
   margin: 0 auto;
-
   color: var(--muted-text);
-
   line-height: 1.8;
 }
 
-/* SECTION TITLE */
+/* TITLE */
 
 .recommendation-section-title {
   margin: 0;
-
   color: var(--text-color);
-
   font-size: 1.5rem;
-
-  letter-spacing: -0.04em;
-
   font-weight: 900;
+  letter-spacing: -0.04em;
 }
 
 /* RESPONSIVE */
