@@ -1,33 +1,24 @@
 .eventbrite-checkout-btn {
   position: relative;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-
+  overflow: hidden;
+  padding: 0.95rem 1.6rem;
   border: none;
   border-radius: 999px;
-
-  padding: 0.95rem 1.6rem;
-
   background:
     linear-gradient(
       135deg,
       #f97316,
       #2563eb
     );
-
   color: white;
-
   font-size: 0.98rem;
   font-weight: 900;
   letter-spacing: -0.02em;
-
   cursor: pointer;
-
-  overflow: hidden;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease,
@@ -36,25 +27,20 @@
 
 .eventbrite-checkout-btn::before {
   content: "";
-
   position: absolute;
   inset: 0;
-
+  opacity: 0;
   background:
     linear-gradient(
       135deg,
       rgba(255,255,255,0.12),
       transparent 55%
     );
-
-  opacity: 0;
-
   transition: opacity 0.25s ease;
 }
 
 .eventbrite-checkout-btn:hover {
   transform: translateY(-3px);
-
   box-shadow:
     0 20px 45px rgba(37, 99, 235, 0.24);
 }
@@ -79,15 +65,13 @@
   outline-offset: 4px;
 }
 
-/* LARGE VARIANT */
+/* LARGE */
 
 .checkout-btn-large {
   width: 100%;
-
   padding: 1.15rem 2rem;
-
-  font-size: 1.08rem;
   border-radius: 24px;
+  font-size: 1.08rem;
 }
 
 /* DARK MODE */

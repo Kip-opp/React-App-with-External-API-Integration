@@ -1,29 +1,21 @@
 .filter-bar {
   width: min(1220px, 92%);
   margin: 0 auto;
-
   display: flex;
-  justify-content: center;
   align-items: flex-end;
-  gap: 1rem;
-
+  justify-content: center;
   flex-wrap: wrap;
-
+  gap: 1rem;
   padding: 1.5rem;
-
+  border: 1px solid var(--border);
   border-radius: 30px;
-
   background:
     linear-gradient(
       145deg,
       rgba(255,255,255,0.88),
       rgba(255,250,245,0.82)
     );
-
-  border: 1px solid var(--border);
-
   backdrop-filter: blur(18px);
-
   box-shadow: var(--shadow);
 }
 
@@ -43,42 +35,29 @@
 }
 
 .filter-group label {
-  font-size: 0.8rem;
-
-  font-weight: 950;
-
   color: var(--text-color);
-
+  font-size: 0.8rem;
+  font-weight: 950;
   text-transform: uppercase;
-
   letter-spacing: 0.08em;
 }
 
 .filter-group select {
   min-width: 220px;
-
   padding: 1rem 1.1rem;
-
-  border-radius: 999px;
-
   border: 1.5px solid rgba(85, 54, 34, 0.08);
-
+  border-radius: 999px;
   background: rgba(255,255,255,0.88);
-
   color: var(--text-color);
-
   font-size: 0.95rem;
   font-weight: 700;
-
   cursor: pointer;
-
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.06);
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.2s ease;
-
-  box-shadow:
-    0 14px 30px rgba(15, 23, 42, 0.06);
 }
 
 .app-dark .filter-group select {
@@ -92,14 +71,10 @@
 
 .filter-group select:focus {
   outline: none;
-
   border-color: #f97316;
-
   box-shadow:
     0 0 0 4px rgba(249, 115, 22, 0.12);
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .filter-bar {

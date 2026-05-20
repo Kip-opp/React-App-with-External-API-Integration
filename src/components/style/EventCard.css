@@ -1,154 +1,90 @@
 .event-card {
   position: relative;
-
   display: flex;
   flex-direction: column;
-
-  background: var(--surface);
-
-  border-radius: 32px;
-
   overflow: hidden;
-
-  border: 1px solid var(--border);
-
-  box-shadow: var(--shadow);
-
-  transition:
-    transform 0.32s ease,
-    box-shadow 0.32s ease,
-    border-color 0.25s ease;
-
   isolation: isolate;
-}
-
-.event-card::before {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.02),
-      transparent 40%
-    );
-
-  pointer-events: none;
-
-  z-index: 1;
+  min-height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.25s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-10px);
-
-  box-shadow:
-    0 35px 80px rgba(15, 23, 42, 0.16);
-
-  border-color: rgba(249, 115, 22, 0.18);
+  transform: translateY(-6px);
+  border-color: rgba(249, 115, 22, 0.16);
+  box-shadow: 0 26px 58px rgba(15, 23, 42, 0.13);
 }
 
 .app-dark .event-card:hover {
-  box-shadow:
-    0 35px 80px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 26px 58px rgba(0, 0, 0, 0.38);
 }
 
 /* IMAGE */
 
 .event-card__image {
   position: relative;
-
-  height: 290px;
-
+  height: 205px;
   overflow: hidden;
-
-  background:
-    linear-gradient(
-      135deg,
-      #f97316,
-      #2563eb
-    );
+  background: linear-gradient(135deg, #f97316, #2563eb);
 }
 
 .event-card__image::after {
   content: "";
-
   position: absolute;
   inset: 0;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(5, 8, 20, 0.88),
-      transparent 65%
-    );
-
   pointer-events: none;
+  background: linear-gradient(to top, rgba(5, 8, 20, 0.55), transparent 60%);
 }
 
 .event-card__image img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
-  transition:
-    transform 0.5s ease,
-    filter 0.35s ease;
+  transition: transform 0.45s ease;
 }
 
 .event-card:hover .event-card__image img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 /* PLACEHOLDER */
 
 .event-card__placeholder {
   height: 100%;
-
   display: grid;
   place-items: center;
-
-  text-align: center;
-
   padding: 1rem;
-
+  text-align: center;
   color: white;
 }
 
 .placeholder-icon {
-  font-size: 3.2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
+  font-size: 2.8rem;
 }
 
 .placeholder-text {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 900;
-  letter-spacing: -0.03em;
 }
 
 /* BADGES */
 
 .source-badge {
   position: absolute;
-
-  top: 1rem;
-  left: 1rem;
-
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 3;
   padding: 0.5rem 0.85rem;
-
   border-radius: 999px;
-
-  font-size: 0.72rem;
+  backdrop-filter: blur(12px);
+  font-size: 0.7rem;
   font-weight: 950;
-
   text-transform: uppercase;
   letter-spacing: 0.05em;
-
-  backdrop-filter: blur(12px);
-
-  z-index: 3;
 }
 
 .source-ticketmaster {
@@ -170,38 +106,22 @@
 
 .favorite-btn {
   position: absolute;
-
-  top: 1rem;
-  right: 1rem;
-
-  width: 46px;
-  height: 46px;
-
-  border-radius: 50%;
-
-  border: none;
-
-  background: rgba(255,255,255,0.92);
-
-  backdrop-filter: blur(12px);
-
-  cursor: pointer;
-
-  font-size: 1.35rem;
-
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  z-index: 4;
-
-  transition:
-    transform 0.22s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
-
-  box-shadow:
-    0 10px 22px rgba(0, 0, 0, 0.14);
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  font-size: 1.18rem;
+  transition: transform 0.22s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .app-dark .favorite-btn {
@@ -226,7 +146,6 @@
   0%, 100% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(1.18);
   }
@@ -235,36 +154,19 @@
 /* CONTENT */
 
 .event-card__content {
-  padding: 1.5rem;
-
   display: flex;
   flex-direction: column;
   flex: 1;
-}
-
-.event-card__title {
-  margin: 0 0 1rem;
-
-  color: var(--text-color);
-
-  font-size: 1.35rem;
-  line-height: 1.25;
-
-  letter-spacing: -0.04em;
-
-  font-weight: 900;
+  padding: 1.35rem;
 }
 
 .event-card__date,
 .event-card__venue,
 .event-card__online {
-  margin: 0 0 0.65rem;
-
-  font-size: 0.92rem;
-
+  margin: 0 0 0.55rem;
   color: var(--muted-text);
-
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 650;
 }
 
 .event-card__online {
@@ -272,77 +174,68 @@
   font-weight: 800;
 }
 
+.event-card__title {
+  margin: 0.15rem 0 0.9rem;
+  color: var(--text-color);
+  font-size: 1.28rem;
+  line-height: 1.18;
+  font-weight: 950;
+  letter-spacing: -0.045em;
+}
+
 .event-card__description {
-  margin: 1rem 0;
-
-  color: var(--muted-text);
-
-  line-height: 1.65;
-
-  font-size: 0.93rem;
-
   flex: 1;
+  margin: 0.9rem 0 1.15rem;
+  color: var(--muted-text);
+  line-height: 1.65;
+  font-size: 0.92rem;
 }
 
 /* FOOTER */
 
 .event-card__footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
 
-  gap: 0.8rem;
-
-  margin-top: 1.2rem;
+.app-dark .event-card__footer {
+  border-color: rgba(255,255,255,0.06);
 }
 
 .event-card__price {
+  color: #f97316;
   font-size: 0.96rem;
   font-weight: 950;
-
-  color: #f97316;
 }
 
 /* BUTTONS */
 
 .event-card__button,
 .ticketmaster-link-btn {
+  width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
+  padding: 0.82rem 1rem;
   border: none;
   border-radius: 999px;
-
-  padding: 0.8rem 1.15rem;
-
-  background:
-    linear-gradient(
-      135deg,
-      #f97316,
-      #2563eb
-    );
-
+  background: linear-gradient(135deg, #f97316, #2563eb);
   color: white;
-
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 900;
-
-  cursor: pointer;
-
   text-decoration: none;
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .event-card__button:hover,
 .ticketmaster-link-btn:hover {
   transform: translateY(-2px);
-
-  box-shadow:
-    0 18px 35px rgba(37, 99, 235, 0.24);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.22);
 }
 
 .view-details-btn {
@@ -353,11 +246,62 @@
   background: #1e293b;
 }
 
+/* Footer action row */
+
+.event-card__footer .event-card__button,
+.event-card__footer .ticketmaster-link-btn,
+.event-card__footer .eventbrite-checkout-btn {
+  width: 100%;
+}
+
+/* ORGANIZER ACTIONS */
+
+.event-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.event-card__edit-btn,
+.event-card__delete-btn,
+.event-card button:not(.favorite-btn):not(.event-card__button):not(.ticketmaster-link-btn):not(.eventbrite-checkout-btn) {
+  border: none;
+  border-radius: 16px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.event-card__edit-btn {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.event-card__edit-btn:hover {
+  background: #2563eb;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.event-card__delete-btn {
+  background: rgba(244, 63, 94, 0.12);
+  color: #f43f5e;
+}
+
+.event-card__delete-btn:hover {
+  background: #f43f5e;
+  color: white;
+  transform: translateY(-2px);
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 768px) {
   .event-card__image {
-    height: 240px;
+    height: 210px;
   }
 
   .event-card__content {
@@ -365,22 +309,16 @@
   }
 
   .event-card__title {
-    font-size: 1.2rem;
+    font-size: 1.18rem;
   }
 }
 
 @media (max-width: 520px) {
   .event-card {
-    border-radius: 26px;
+    border-radius: 24px;
   }
 
-  .event-card__footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .event-card__button,
-  .ticketmaster-link-btn {
-    width: 100%;
+  .event-card__actions {
+    grid-template-columns: 1fr;
   }
 }

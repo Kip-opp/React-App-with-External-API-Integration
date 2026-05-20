@@ -1,14 +1,10 @@
 .search-hero {
   position: relative;
   min-height: 94vh;
-
   display: flex;
   align-items: center;
-
   overflow: hidden;
-
   color: white;
-
   background:
     radial-gradient(circle at 12% 18%, rgba(249, 115, 22, 0.38), transparent 28%),
     radial-gradient(circle at 82% 16%, rgba(37, 99, 235, 0.36), transparent 30%),
@@ -17,19 +13,15 @@
 
 .search-hero::before {
   content: "";
-
   position: absolute;
   inset: 0;
-
   background:
     linear-gradient(
       180deg,
       rgba(255,255,255,0.02),
       transparent
     );
-
   pointer-events: none;
-
   z-index: 1;
 }
 
@@ -38,16 +30,11 @@
 .hero-background {
   position: absolute;
   inset: 0;
-
   background-size: cover;
   background-position: center;
-
   opacity: 0;
-
   transition: opacity 1.3s ease-in-out;
-
   z-index: 1;
-
   filter:
     saturate(1.1)
     contrast(1.04)
@@ -61,7 +48,6 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-
   background:
     linear-gradient(
       90deg,
@@ -74,7 +60,6 @@
       transparent 0%,
       rgba(0, 0, 0, 0.35) 78%
     );
-
   z-index: 2;
 }
 
@@ -83,17 +68,12 @@
 .search-hero__content {
   position: relative;
   z-index: 3;
-
   width: min(1280px, 100%);
   margin: 0 auto;
-
   padding: 6rem 5vw 8rem;
-
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-
   align-items: center;
-
   gap: 3rem;
 }
 
@@ -103,24 +83,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-
   margin-bottom: 1rem;
-
   padding: 0.58rem 0.9rem;
-
   border-radius: 999px;
-
   background: rgba(255,255,255,0.12);
-
   border: 1px solid rgba(255,255,255,0.16);
-
   backdrop-filter: blur(16px);
-
   font-size: 0.76rem;
   font-weight: 950;
-
   text-transform: uppercase;
-
   letter-spacing: 0.12em;
 }
 
@@ -131,30 +102,20 @@
 
 .search-hero__title {
   max-width: 760px;
-
   margin: 0 0 1.4rem;
-
   font-size: clamp(3.4rem, 7vw, 7.2rem);
-
   font-weight: 950;
-
   line-height: 0.9;
-
   letter-spacing: -0.09em;
-
   text-shadow:
     0 24px 60px rgba(0,0,0,0.4);
 }
 
 .search-hero__subtitle {
   max-width: 640px;
-
   margin: 0 0 1.8rem;
-
   font-size: 1.08rem;
-
   line-height: 1.8;
-
   color: rgba(255,255,255,0.78);
 }
 
@@ -162,23 +123,15 @@
 
 .search-hero__form {
   max-width: 690px;
-
   padding: 0.65rem;
-
   border-radius: 999px;
-
   background: rgba(255,255,255,0.12);
-
   border: 1px solid rgba(255,255,255,0.16);
-
   backdrop-filter: blur(22px);
-
   box-shadow:
     0 28px 80px rgba(0,0,0,0.28);
-
   display: grid;
   grid-template-columns: 1fr auto;
-
   gap: 0.5rem;
 }
 
@@ -189,21 +142,14 @@
 .search-input {
   width: 100%;
   height: 58px;
-
   padding: 0 1.25rem;
-
   border: none;
   border-radius: 999px;
-
   background: rgba(255,255,255,0.94);
-
   color: #17131f;
-
   font-size: 0.96rem;
   font-weight: 600;
-
   outline: none;
-
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -211,35 +157,26 @@
 
 .search-input:focus {
   transform: translateY(-1px);
-
   box-shadow:
     0 0 0 4px rgba(255,255,255,0.18);
 }
 
 .search-button {
   height: 58px;
-
   padding: 0 1.6rem;
-
   border: none;
   border-radius: 999px;
-
   background:
     linear-gradient(
       135deg,
       #f97316,
       #f59e0b
     );
-
   color: #17131f;
-
   font-size: 0.96rem;
   font-weight: 950;
-
   cursor: pointer;
-
   white-space: nowrap;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -247,7 +184,6 @@
 
 .search-button:hover {
   transform: translateY(-2px);
-
   box-shadow:
     0 20px 40px rgba(249, 115, 22, 0.28);
 }
@@ -257,29 +193,19 @@
 .hero-category-pills {
   display: flex;
   flex-wrap: wrap;
-
   gap: 0.65rem;
-
   margin: 1rem 0 1.5rem;
 }
 
 .hero-pill {
   border: 1px solid rgba(255,255,255,0.14);
-
   background: rgba(255,255,255,0.1);
-
   color: white;
-
   border-radius: 999px;
-
   padding: 0.7rem 0.95rem;
-
   font-weight: 850;
-
   cursor: pointer;
-
   backdrop-filter: blur(14px);
-
   transition:
     transform 0.24s ease,
     background 0.24s ease,
@@ -290,7 +216,6 @@
 .hero-pill.active {
   background: white;
   color: #17131f;
-
   transform: translateY(-2px);
 }
 
@@ -304,32 +229,23 @@
 
 .hero-stats div {
   min-width: 125px;
-
   padding: 1rem;
-
   border-radius: 24px;
-
   background: rgba(255,255,255,0.11);
-
   border: 1px solid rgba(255,255,255,0.14);
-
   backdrop-filter: blur(14px);
 }
 
 .hero-stats strong {
   display: block;
-
   font-size: 1.3rem;
   font-weight: 950;
 }
 
 .hero-stats span {
   display: block;
-
   margin-top: 0.2rem;
-
   color: rgba(255,255,255,0.7);
-
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -338,9 +254,7 @@
 
 .hero-showcase {
   position: relative;
-
   min-height: 620px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,13 +262,9 @@
 
 .phone-card {
   width: min(360px, 88vw);
-
   min-height: 600px;
-
   padding: 0.9rem;
-
   border-radius: 48px;
-
   background:
     linear-gradient(
       180deg,
@@ -362,16 +272,11 @@
       rgba(255,255,255,0.08)
     ),
     rgba(255,255,255,0.06);
-
   border: 1px solid rgba(255,255,255,0.22);
-
   backdrop-filter: blur(24px);
-
   box-shadow:
     0 45px 120px rgba(0,0,0,0.42);
-
   transform: rotate(4deg);
-
   animation: floatPhone 5s ease-in-out infinite;
 }
 
@@ -379,7 +284,6 @@
   0%, 100% {
     transform: rotate(4deg) translateY(0);
   }
-
   50% {
     transform: rotate(2deg) translateY(-14px);
   }
@@ -387,115 +291,79 @@
 
 .phone-card__top {
   height: 42px;
-
   padding: 0 1rem;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   color: rgba(255,255,255,0.82);
-
   font-size: 0.82rem;
   font-weight: 900;
 }
 
 .phone-card__image {
   height: 320px;
-
   overflow: hidden;
-
   border-radius: 36px;
-
   background: var(--gradient-main);
 }
 
 .phone-card__image img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
 }
 
 .phone-card__placeholder {
   height: 100%;
-
   display: grid;
   place-items: center;
-
   font-size: 5rem;
 }
 
 .phone-card__body {
   margin-top: 0.9rem;
-
   padding: 1.2rem;
-
   border-radius: 30px;
-
   background: rgba(255,255,255,0.94);
-
   color: #17131f;
 }
 
 .phone-tag {
   display: inline-flex;
-
   margin-bottom: 0.7rem;
-
   padding: 0.42rem 0.7rem;
-
   border-radius: 999px;
-
   background: #fff0e8;
-
   color: #d44a1c;
-
   font-size: 0.72rem;
   font-weight: 950;
-
   text-transform: uppercase;
-
   letter-spacing: 0.08em;
 }
 
 .phone-card__body h3 {
   margin: 0 0 0.55rem;
-
   font-size: 1.4rem;
-
   line-height: 1.08;
-
   letter-spacing: -0.04em;
 }
 
 .phone-card__body p {
   margin: 0 0 1rem;
-
   color: #746b62;
-
   line-height: 1.6;
-
   font-size: 0.9rem;
 }
 
 .phone-card__body button {
   width: 100%;
-
   border: none;
-
   padding: 0.95rem 1rem;
-
   border-radius: 999px;
-
   background: #17131f;
-
   color: white;
-
   font-weight: 950;
-
   cursor: pointer;
-
   transition: 0.25s ease;
 }
 
@@ -507,29 +375,21 @@
 
 .hero-indicators {
   position: absolute;
-
   bottom: 2rem;
   left: 50%;
-
   transform: translateX(-50%);
-
   display: flex;
   gap: 0.7rem;
-
   z-index: 3;
 }
 
 .indicator {
   width: 38px;
   height: 6px;
-
   border: none;
   border-radius: 999px;
-
   background: rgba(255,255,255,0.26);
-
   cursor: pointer;
-
   transition: 0.24s ease;
 }
 
@@ -542,9 +402,7 @@
 @media (max-width: 1040px) {
   .search-hero__content {
     grid-template-columns: 1fr;
-
     text-align: center;
-
     padding-top: 5rem;
   }
 
@@ -576,7 +434,6 @@
 
   .search-hero__form {
     grid-template-columns: 1fr;
-
     border-radius: 28px;
   }
 

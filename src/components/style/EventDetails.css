@@ -1,26 +1,26 @@
 .event-details-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 20, 0.76);
-  backdrop-filter: blur(12px);
+  z-index: 1800;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1800;
-  padding: 1rem;
   overflow-y: auto;
+  padding: 1rem;
+  background: rgba(5, 8, 20, 0.76);
+  backdrop-filter: blur(12px);
 }
 
 .event-details {
-  background: var(--surface);
-  border-radius: 34px;
-  max-width: 980px;
+  position: relative;
   width: 100%;
+  max-width: 980px;
   max-height: 92vh;
   overflow-y: auto;
-  position: relative;
-  box-shadow: 0 35px 110px rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border);
+  border-radius: 34px;
+  background: var(--surface);
+  box-shadow: 0 35px 110px rgba(0, 0, 0, 0.35);
   animation: slideUp 0.3s ease;
 }
 
@@ -28,15 +28,16 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.92);
-  border: none;
+  z-index: 10;
   width: 44px;
   height: 44px;
+  border: none;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.2);
   font-size: 1.4rem;
   cursor: pointer;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-  z-index: 10;
   transition: 0.25s ease;
 }
 
@@ -49,16 +50,18 @@
   transform: rotate(90deg) scale(1.05);
 }
 
+/* BADGES */
+
 .event-source-badge,
 .event-status-badge {
   position: absolute;
   top: 1rem;
+  z-index: 10;
   padding: 0.55rem 0.95rem;
   border-radius: 999px;
+  backdrop-filter: blur(10px);
   font-size: 0.78rem;
   font-weight: 900;
-  backdrop-filter: blur(10px);
-  z-index: 10;
   text-transform: uppercase;
 }
 
@@ -100,12 +103,14 @@
   color: white;
 }
 
+/* HERO */
+
 .event-details__hero {
+  position: relative;
   width: 100%;
   height: 430px;
   overflow: hidden;
   border-radius: 34px 34px 0 0;
-  position: relative;
   background: var(--gradient-main);
 }
 
@@ -113,7 +118,12 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(5, 8, 20, 0.9), transparent 62%);
+  background:
+    linear-gradient(
+      to top,
+      rgba(5, 8, 20, 0.9),
+      transparent 62%
+    );
 }
 
 .event-details__hero img {
@@ -136,12 +146,14 @@
 }
 
 .event-details__hero--placeholder .placeholder-text {
-  color: white;
-  font-weight: 900;
-  font-size: 1.8rem;
-  text-align: center;
   padding: 0 2rem;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 900;
 }
+
+/* CONTENT */
 
 .event-details__content {
   padding: 2rem;
@@ -149,26 +161,26 @@
 
 .event-details__top-row {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .event-details__category {
   display: inline-flex;
   padding: 0.55rem 1rem;
+  border-radius: 999px;
   background: var(--gradient-main);
   color: white;
-  border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 900;
 }
 
 .details-save-btn {
+  padding: 0.75rem 1rem;
   border: none;
   border-radius: 999px;
-  padding: 0.75rem 1rem;
   background: rgba(249, 115, 22, 0.12);
   color: #f97316;
   font-weight: 900;
@@ -181,13 +193,15 @@
 }
 
 .event-details__title {
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  line-height: 1;
-  letter-spacing: -0.06em;
   margin: 1rem 0 1.2rem;
   color: var(--text-color);
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1;
   font-weight: 950;
+  letter-spacing: -0.06em;
 }
+
+/* SUMMARY */
 
 .event-details__summary {
   display: flex;
@@ -201,19 +215,22 @@
   border-radius: 999px;
   background: rgba(37, 99, 235, 0.08);
   color: #2563eb;
-  font-weight: 850;
   font-size: 0.9rem;
+  font-weight: 850;
 }
+
+/* INFO */
 
 .event-details__info {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns:
+    repeat(auto-fit, minmax(230px, 1fr));
   gap: 1rem;
   margin: 2rem 0;
   padding: 1rem;
-  background: rgba(249, 115, 22, 0.05);
-  border-radius: 28px;
   border: 1px solid var(--border);
+  border-radius: 28px;
+  background: rgba(249, 115, 22, 0.05);
 }
 
 .app-dark .event-details__info {
@@ -222,23 +239,23 @@
 
 .info-item {
   display: flex;
-  gap: 0.85rem;
   align-items: flex-start;
+  gap: 0.85rem;
   padding: 1rem;
-  background: var(--surface);
-  border-radius: 20px;
   border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
 }
 
 .info-item .icon {
-  font-size: 1.35rem;
   min-width: 1.35rem;
+  font-size: 1.35rem;
 }
 
 .info-item strong {
   display: block;
-  color: var(--text-color);
   margin-bottom: 0.35rem;
+  color: var(--text-color);
   font-weight: 900;
 }
 
@@ -254,6 +271,8 @@
   font-weight: 800;
 }
 
+/* DESCRIPTION */
+
 .event-details__description,
 .event-details__tickets {
   margin: 2rem 0;
@@ -267,10 +286,12 @@
 }
 
 .event-details__description p {
-  line-height: 1.8;
   color: var(--muted-text);
+  line-height: 1.8;
   white-space: pre-wrap;
 }
+
+/* TICKETS */
 
 .tickets-list {
   display: flex;
@@ -280,13 +301,13 @@
 
 .ticket-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 1.2rem;
   padding: 1.3rem;
-  background: rgba(249, 115, 22, 0.05);
-  border-radius: 22px;
   border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(249, 115, 22, 0.05);
 }
 
 .app-dark .ticket-item {
@@ -306,8 +327,8 @@
 
 .ticket-availability {
   margin-top: 0.5rem;
-  font-size: 0.85rem;
   color: #2563eb;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
@@ -318,9 +339,11 @@
 .ticket-price .free,
 .ticket-price .price {
   color: #f97316;
-  font-weight: 950;
   font-size: 1.45rem;
+  font-weight: 950;
 }
+
+/* ACTION */
 
 .event-details__action {
   margin-top: 2rem;
@@ -329,28 +352,32 @@
 }
 
 .ticketmaster-cta {
-  text-align: center;
   padding: 2rem;
-  background:
-    radial-gradient(circle at top left, rgba(249, 115, 22, 0.16), transparent 35%),
-    rgba(37, 99, 235, 0.05);
   border-radius: 26px;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(249, 115, 22, 0.16),
+      transparent 35%
+    ),
+    rgba(37, 99, 235, 0.05);
 }
 
 .cta-message {
   margin: 0 0 1.5rem;
-  font-size: 1.05rem;
   color: var(--text-color);
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
 .ticketmaster-button {
   display: inline-flex;
   padding: 1rem 2rem;
+  border-radius: 999px;
   background: #17131f;
   color: white;
   text-decoration: none;
-  border-radius: 999px;
   font-size: 1rem;
   font-weight: 900;
   transition: 0.25s ease;
@@ -358,14 +385,17 @@
 
 .ticketmaster-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 35px rgba(7, 5, 31, 0.25);
+  box-shadow:
+    0 18px 35px rgba(7, 5, 31, 0.25);
 }
+
+/* EMPTY */
 
 .no-checkout-message {
   padding: 1.5rem;
-  background: rgba(249, 115, 22, 0.06);
   border-radius: 20px;
   text-align: center;
+  background: rgba(249, 115, 22, 0.06);
 }
 
 .no-checkout-message p {
@@ -375,24 +405,27 @@
 
 .event-details-loading,
 .event-details-error {
-  background: var(--surface);
-  color: var(--text-color);
   padding: 2rem;
   border-radius: 24px;
+  background: var(--surface);
+  color: var(--text-color);
   box-shadow: var(--shadow);
 }
+
+/* ANIMATION */
 
 @keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(45px) scale(0.98);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
+
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .event-details {
@@ -418,7 +451,7 @@
   }
 
   .event-source-badge {
-    right: 1rem;
     top: 4.8rem;
+    right: 1rem;
   }
 }
