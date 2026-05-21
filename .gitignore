@@ -34,3 +34,6 @@ backend/__pycache__/
 backend/*.pyc
 backend/eventsphere.db
 backend/.envbackend/instance/events.db
+
+backend/create_sample_orders.py
+src/components/profile/

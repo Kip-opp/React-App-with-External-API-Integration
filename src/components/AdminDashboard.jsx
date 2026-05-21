@@ -2,8 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import authService from '../services/authService';
 import eventbriteService from '../services/eventbriteService';
-
 import StateViews from './StateViews';
+import {
+  UsersModal,
+  UsersDetailModal,
+  EventsModal,
+  EventsDetailModal,
+  CategoriesModal,
+  SourcesModal,
+  SourceEventsModal,
+} from './AdminModals';
 
 import './style/AdminDashboard.css';
 
@@ -13,6 +21,8 @@ const AdminDashboard = ({ onClose, onToast }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [activeModal, setActiveModal] = useState(null);
+  const [modalConfig, setModalConfig] = useState({});
 
   const token = authService.getToken();
 
@@ -65,19 +75,8 @@ const AdminDashboard = ({ onClose, onToast }) => {
   const handleApprove = async (eventId) => {
     try {
       const token = authService.getToken();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/events/${eventId}/approve`, {
-        method: 'PUT',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to approve event');
-      }
-      
-      onToast?.('Event approved successfully', 'success');
+      const result = await eventbriteService.approveEvent(eventId, token);
+      onToast?.(result.message || 'Event approved successfully', 'success');
       await fetchDashboard();
     } catch (err) {
       onToast?.(err.message || 'Failed to approve event', 'error');
@@ -87,26 +86,28 @@ const AdminDashboard = ({ onClose, onToast }) => {
   const handleReject = async (eventId) => {
     try {
       const token = authService.getToken();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/events/${eventId}/reject`, {
-        method: 'PUT',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to reject event');
-      }
-      
-      onToast?.('Event rejected', 'success');
+      const result = await eventbriteService.rejectEvent(eventId, token);
+      onToast?.(result.message || 'Event rejected', 'success');
       await fetchDashboard();
     } catch (err) {
       onToast?.(err.message || 'Failed to reject event', 'error');
     }
   };
 
+  const openModal = (modalName, config = {}) => {
+    setModalConfig(config);
+    setActiveModal(modalName);
+  };
 
+  const closeModal = () => {
+    setActiveModal(null);
+    setModalConfig({});
+  };
+
+  const openSourceEventsModal = (source) => {
+    setModalConfig({ source });
+    setActiveModal('sourceEvents');
+  };
 
   if (loading) {
     return (
@@ -225,22 +226,52 @@ const AdminDashboard = ({ onClose, onToast }) => {
           
           <div className="analytics-sections">
             {/* Events Section */}
-            <div className="analytics-section">
-              <h3>Events</h3>
+            <div
+              className="analytics-section clickable"
+              onClick={() => openModal('events')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openModal('events')}
+            >
+              <h3 className="clickable-title">Events →</h3>
               <div className="analytics-grid">
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'approved', title: 'Approved Events' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'approved', title: 'Approved Events' }); } }}
+                >
                   <span className="analytics-label">Approved:</span>
                   <span className="analytics-value">{analytics?.events?.approved || 0}</span>
                 </div>
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'pending', title: 'Pending Events' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'pending', title: 'Pending Events' }); } }}
+                >
                   <span className="analytics-label">Pending:</span>
                   <span className="analytics-value">{analytics?.events?.pending || 0}</span>
                 </div>
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'rejected', title: 'Rejected Events' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('eventsDetail', { statusFilter: 'rejected', title: 'Rejected Events' }); } }}
+                >
                   <span className="analytics-label">Rejected:</span>
                   <span className="analytics-value">{analytics?.events?.rejected || 0}</span>
                 </div>
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('eventsDetail', { title: 'All Events' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('eventsDetail', { title: 'All Events' }); } }}
+                >
                   <span className="analytics-label">Total:</span>
                   <span className="analytics-value">{analytics?.events?.total || 0}</span>
                 </div>
@@ -248,12 +279,25 @@ const AdminDashboard = ({ onClose, onToast }) => {
             </div>
 
             {/* Popular Categories Section */}
-            <div className="analytics-section">
-              <h3>Popular Categories</h3>
+            <div
+              className="analytics-section clickable"
+              onClick={() => openModal('categories')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openModal('categories')}
+            >
+              <h3 className="clickable-title">Popular Categories →</h3>
               <div className="analytics-list">
                 {analytics?.popular_categories?.length > 0 ? (
-                  analytics.popular_categories.map((cat, idx) => (
-                    <div key={idx} className="analytics-list-item">
+                  analytics.popular_categories.slice(0, 5).map((cat, idx) => (
+                    <div
+                      key={idx}
+                      className="analytics-list-item clickable"
+                      onClick={(e) => { e.stopPropagation(); openModal('eventsDetail', { categoryFilter: cat.category, title: `Events: ${cat.category}` }); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('eventsDetail', { categoryFilter: cat.category, title: `Events: ${cat.category}` }); } }}
+                    >
                       <span>{cat.category}</span>
                       <span className="category-count">{cat.count} events</span>
                     </div>
@@ -264,64 +308,133 @@ const AdminDashboard = ({ onClose, onToast }) => {
               </div>
             </div>
 
-            {/* Saved Events Section */}
-            <div className="analytics-section">
-              <h3>Saved Events</h3>
-              <div className="analytics-grid">
-                <div className="analytics-item">
-                  <span className="analytics-label">Total Saves:</span>
-                  <span className="analytics-value">{analytics?.saved_events?.total_saves || 0}</span>
-                </div>
-                <div className="analytics-item">
-                  <span className="analytics-label">Unique Users:</span>
-                  <span className="analytics-value">{analytics?.saved_events?.unique_users || 0}</span>
-                </div>
-              </div>
-            </div>
-
             {/* Source Summary Section */}
-            <div className="analytics-section">
-              <h3>Source Summary</h3>
+            <div
+              className="analytics-section clickable"
+              onClick={() => openModal('sources')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openModal('sources')}
+            >
+              <h3 className="clickable-title">Source Summary →</h3>
               <div className="analytics-grid">
-                <div className="analytics-item">
-                  <span className="analytics-label">EventSphere:</span>
-                  <span className="analytics-value">{analytics?.source_summary?.eventsphere || 0}</span>
-                </div>
-                <div className="analytics-item">
-                  <span className="analytics-label">Eventbrite:</span>
-                  <span className="analytics-value">{analytics?.source_summary?.eventbrite || 0}</span>
-                </div>
-                <div className="analytics-item">
-                  <span className="analytics-label">Ticketmaster:</span>
-                  <span className="analytics-value">{analytics?.source_summary?.ticketmaster || 0}</span>
-                </div>
+                {['EventSphere', 'Eventbrite', 'Ticketmaster'].map((src) => (
+                  <div
+                    key={src}
+                    className="analytics-item clickable"
+                    onClick={(e) => { e.stopPropagation(); openSourceEventsModal(src); }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openSourceEventsModal(src); } }}
+                  >
+                    <span className="analytics-label">{src}:</span>
+                    <span className="analytics-value">{analytics?.source_summary?.[src] || 0}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Users Section */}
-            <div className="analytics-section">
-              <h3>Users</h3>
+            <div
+              className="analytics-section clickable"
+              onClick={() => openModal('users')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openModal('users')}
+            >
+              <h3 className="clickable-title">Users →</h3>
               <div className="analytics-grid">
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('usersDetail', { title: 'All Users' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('usersDetail', { title: 'All Users' }); } }}
+                >
                   <span className="analytics-label">Total Users:</span>
                   <span className="analytics-value">{analytics?.users?.total || 0}</span>
                 </div>
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('usersDetail', { roleFilter: 'admin', title: 'Admins' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('usersDetail', { roleFilter: 'admin', title: 'Admins' }); } }}
+                >
                   <span className="analytics-label">Admins:</span>
                   <span className="analytics-value">{analytics?.users?.admins || 0}</span>
                 </div>
-                <div className="analytics-item">
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('usersDetail', { roleFilter: 'organizer', title: 'Organizers' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('usersDetail', { roleFilter: 'organizer', title: 'Organizers' }); } }}
+                >
                   <span className="analytics-label">Organizers:</span>
                   <span className="analytics-value">{analytics?.users?.organizers || 0}</span>
                 </div>
-                <div className="analytics-item">
-                  <span className="analytics-label">Regular Users:</span>
-                  <span className="analytics-value">{analytics?.users?.users || 0}</span>
+                <div
+                  className="analytics-item clickable"
+                  onClick={(e) => { e.stopPropagation(); openModal('usersDetail', { recentFilter: 'true', title: 'Recent Accounts (7 days)' }); }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); openModal('usersDetail', { recentFilter: 'true', title: 'Recent Accounts (7 days)' }); } }}
+                >
+                  <span className="analytics-label">Recent Accounts:</span>
+                  <span className="analytics-value">{analytics?.users?.recent_accounts || 0}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {activeModal === 'users' && (
+        <UsersModal title="User Management" onClose={closeModal} onToast={onToast} />
+      )}
+      {activeModal === 'usersDetail' && (
+        <UsersDetailModal
+          title={modalConfig.title || 'Users'}
+          roleFilter={modalConfig.roleFilter}
+          recentFilter={modalConfig.recentFilter}
+          onClose={closeModal}
+          onToast={onToast}
+        />
+      )}
+      {activeModal === 'events' && (
+        <EventsModal title="All Events" onClose={closeModal} onToast={onToast} />
+      )}
+      {activeModal === 'eventsDetail' && (
+        <EventsDetailModal
+          title={modalConfig.title || 'Events'}
+          statusFilter={modalConfig.statusFilter}
+          categoryFilter={modalConfig.categoryFilter}
+          onClose={closeModal}
+          onToast={onToast}
+        />
+      )}
+      {activeModal === 'categories' && (
+        <CategoriesModal title="Popular Categories" analytics={analytics} onClose={closeModal} />
+      )}
+      {activeModal === 'sources' && (
+        <SourcesModal
+          title="Event Sources"
+          analytics={analytics}
+          onClose={closeModal}
+          onSourceClick={(src) => {
+            closeModal();
+            // slight delay to allow close animation
+            setTimeout(() => openSourceEventsModal(src), 50);
+          }}
+        />
+      )}
+      {activeModal === 'sourceEvents' && (
+        <SourceEventsModal
+          title={`Events from ${modalConfig.source || 'Source'}`}
+          source={modalConfig.source || 'EventSphere'}
+          onClose={closeModal}
+        />
       )}
     </section>
   );
