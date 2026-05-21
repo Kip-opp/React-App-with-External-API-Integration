@@ -1,8 +1,9 @@
+from datetime import datetime, timedelta
+
 from flask import Blueprint, jsonify
 
 from app.middleware.auth import admin_required
 from app.models.event import Event
-from app.models.saved_event import SavedEvent
 from app.models.user import User, db
 
 
@@ -14,7 +15,6 @@ analytics_bp = Blueprint("analytics", __name__)
 def get_admin_analytics(current_user):
     total_users = User.query.count()
     total_events = Event.query.count()
-    total_saved_events = SavedEvent.query.count()
 
     approved_events = Event.query.filter_by(status="approved").count()
     pending_events = Event.query.filter_by(status="pending").count()
@@ -23,6 +23,9 @@ def get_admin_analytics(current_user):
     total_organizers = User.query.filter_by(role="organizer").count()
     total_admins = User.query.filter_by(role="admin").count()
     total_regular_users = User.query.filter_by(role="user").count()
+
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    recent_accounts = User.query.filter(User.created_at >= seven_days_ago).count()
 
     category_rows = (
         db.session.query(Event.category, db.func.count(Event.id))
@@ -39,8 +42,9 @@ def get_admin_analytics(current_user):
     ]
 
     source_summary = {
-        "local_events": total_events,
-        "saved_events": total_saved_events,
+        "EventSphere": total_events,
+        "Eventbrite": 0,
+        "Ticketmaster": 0,
     }
 
     return jsonify({
@@ -49,15 +53,13 @@ def get_admin_analytics(current_user):
             "regular_users": total_regular_users,
             "organizers": total_organizers,
             "admins": total_admins,
+            "recent_accounts": recent_accounts,
         },
         "events": {
             "total": total_events,
             "approved": approved_events,
             "pending": pending_events,
             "rejected": rejected_events,
-        },
-        "saved_events": {
-            "total": total_saved_events,
         },
         "popular_categories": popular_categories,
         "source_summary": source_summary,

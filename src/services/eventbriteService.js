@@ -247,6 +247,145 @@ class EventbriteService {
 
     return data;
   }
+
+  async getAdminUsers(token, page = 1, perPage = 10, role = null, recent = null) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: perPage.toString(),
+    });
+
+    if (role) params.append('role', role);
+    if (recent) params.append('recent', recent);
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/users?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch admin users');
+    }
+
+    return data;
+  }
+
+  async getAdminEvents(token, page = 1, perPage = 10, category = null, status = null) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: perPage.toString(),
+    });
+
+    if (category) params.append('category', category);
+    if (status) params.append('status', status);
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/events?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch admin events');
+    }
+
+    return data;
+  }
+
+  async promoteUserToAdmin(userId, token) {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/users/${userId}/promote`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to promote user');
+    }
+
+    return data;
+  }
+
+  async demoteAdminToUser(userId, token) {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/users/${userId}/demote`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to demote user');
+    }
+
+    return data;
+  }
+
+  async getEventsBySource(token, page = 1, perPage = 10, source = 'EventSphere') {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      per_page: perPage.toString(),
+      source,
+    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/events/by-source?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch events by source');
+    }
+
+    return data;
+  }
+
+  async toggleUserStatus(userId, token) {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/users/${userId}/toggle-status`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to toggle user status');
+    }
+
+    return data;
+  }
 }
 
 export default new EventbriteService();
