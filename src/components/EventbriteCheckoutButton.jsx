@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import authService from '../services/authService';
 import './style/EventbriteCheckoutButton.css';
 
@@ -15,7 +15,34 @@ const generateId = (eventbriteId, eventUrl) => {
   return `eb-widget-${Math.abs(hash).toString(36)}`;
 };
 
-const scriptLoadStarted = new Set();
+const EB_WIDGETS_URL = 'https://www.eventbrite.com/static/widgets/eb_widgets.js';
+let ebWidgetsPromise = null;
+
+function loadEBWidgets() {
+  if (ebWidgetsPromise) {
+    return ebWidgetsPromise;
+  }
+
+  ebWidgetsPromise = new Promise((resolve, reject) => {
+    if (typeof window !== 'undefined' && window.EBWidgets) {
+      return resolve();
+    }
+
+    const script = document.createElement('script');
+    script.src = EB_WIDGETS_URL;
+    script.async = true;
+
+    script.onload = () => resolve();
+    script.onerror = () => {
+      ebWidgetsPromise = null; // allow retry on next attempt
+      reject(new Error('Failed to load Eventbrite widgets script'));
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return ebWidgetsPromise;
+}
 
 const EventbriteCheckoutButton = ({
   eventbriteId,
@@ -30,9 +57,16 @@ const EventbriteCheckoutButton = ({
     [eventbriteId, eventUrl]
   );
 
-  const isHttps =
-    typeof window !== 'undefined' &&
-    window.location.protocol === 'https:';
+  const widgetInitializedRef = useRef(false);
+
+  const shouldUseWidget = useMemo(() => {
+    if (!eventbriteId || typeof window === 'undefined') return false;
+
+    const { protocol, hostname } = window.location;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    return protocol === 'https:' || isLocal;
+  }, [eventbriteId]);
 
   const handleOrderComplete = useCallback(() => {
     alert(
@@ -41,10 +75,12 @@ const EventbriteCheckoutButton = ({
   }, []);
 
   useEffect(() => {
-    if (!eventbriteId || !isHttps) return;
+    if (!shouldUseWidget) return;
 
-    const createWidget = () => {
-      if (!window.EBWidgets) return;
+    let pollInterval = null;
+
+    const initWidget = () => {
+      if (!window.EBWidgets) return false;
 
       try {
         window.EBWidgets.createWidget({
@@ -54,48 +90,53 @@ const EventbriteCheckoutButton = ({
           modalTriggerElementId: triggerId,
           onOrderComplete: handleOrderComplete,
         });
+
+        widgetInitializedRef.current = true;
+        return true;
       } catch (error) {
-        console.error(
-          'Error creating Eventbrite widget:',
-          error
-        );
+        console.error('Error creating Eventbrite widget:', error);
+        return false;
       }
     };
 
-    if (window.EBWidgets) {
-      createWidget();
-      return;
-    }
+    const startPolling = () => {
+      // Try immediately
+      if (initWidget()) return;
 
-    if (scriptLoadStarted.has(eventbriteId)) {
-      return;
-    }
+      // Robust polling for race conditions
+      pollInterval = setInterval(() => {
+        if (initWidget()) {
+          clearInterval(pollInterval);
+          pollInterval = null;
+        }
+      }, 100);
 
-    scriptLoadStarted.add(eventbriteId);
-
-    const script = document.createElement('script');
-
-    script.src =
-      'https://www.eventbrite.com/static/widgets/eb_widgets.js';
-
-    script.async = true;
-
-    script.onload = createWidget;
-
-    script.onerror = () => {
-      console.error(
-        'Failed to load Eventbrite widget script'
-      );
+      // Stop polling after timeout
+      setTimeout(() => {
+        if (pollInterval) {
+          clearInterval(pollInterval);
+          pollInterval = null;
+          console.warn(
+            'Eventbrite widget initialization timed out for event',
+            eventbriteId
+          );
+        }
+      }, 5000);
     };
 
-    document.body.appendChild(script);
+    loadEBWidgets()
+      .then(startPolling)
+      .catch((err) => {
+        console.error('Failed to load Eventbrite widgets script:', err);
+        // widgetInitializedRef remains false → will use fallback
+      });
 
     return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      if (pollInterval) {
+        clearInterval(pollInterval);
       }
     };
-  }, [eventbriteId, handleOrderComplete, isHttps, triggerId]);
+  }, [eventbriteId, triggerId, handleOrderComplete, shouldUseWidget]);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -111,28 +152,21 @@ const EventbriteCheckoutButton = ({
           isFree,
         });
       } else {
-        alert(
-          'Please login or create an account to continue.'
-        );
+        alert('Please login or create an account to continue.');
       }
-
       return;
     }
 
-    if (isHttps && eventbriteId) {
+    // Only let widget handle if it was successfully initialized
+    if (shouldUseWidget && widgetInitializedRef.current) {
       return;
     }
 
+    // Reliable fallback: open in new tab ONLY if widget failed to initialize
     if (eventUrl) {
-      window.open(
-        eventUrl,
-        '_blank',
-        'noopener,noreferrer'
-      );
+      window.open(eventUrl, '_blank', 'noopener,noreferrer');
     } else {
-      alert(
-        'Checkout is not available for this event.'
-      );
+      alert('Checkout is not available for this event.');
     }
   };
 

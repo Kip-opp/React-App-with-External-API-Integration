@@ -185,14 +185,7 @@
 }
 
 .saved-events-view .saved-events-list {
-  display: grid;
-  gap: 2rem;
-}
-
-.saved-events-view .saved-event-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+  /* Let EventGrid handle the grid layout via .events-grid */
 }
 
 .saved-events-view .saved-event-actions {
@@ -223,4 +216,11 @@
 
 .saved-events-view .saved-event-actions button.danger {
   background: linear-gradient(135deg, #ef4444, #f43f5e);
+}
+
+/* Support for renderActions in EventGrid within saved view */
+.saved-events-view .event-with-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }

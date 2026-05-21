@@ -38,11 +38,11 @@
   filter:
     saturate(1.1)
     contrast(1.04)
-    brightness(0.9);
+    brightness(1.1);
 }
 
 .hero-background.active {
-  opacity: 0.32;
+  opacity: 0.6;
 }
 
 .hero-overlay {
@@ -51,9 +51,9 @@
   background:
     linear-gradient(
       90deg,
-      rgba(7, 10, 20, 0.96),
-      rgba(17, 24, 39, 0.72),
-      rgba(7, 10, 20, 0.92)
+      rgba(7, 10, 20, 0.8),
+      rgba(17, 24, 39, 0.4),
+      rgba(7, 10, 20, 0.75)
     ),
     radial-gradient(
       circle at center,
@@ -78,27 +78,6 @@
 }
 
 /* LEFT */
-
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 1rem;
-  padding: 0.58rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.16);
-  backdrop-filter: blur(16px);
-  font-size: 0.76rem;
-  font-weight: 950;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.hero-kicker::before {
-  content: "●";
-  color: #a3e635;
-}
 
 .search-hero__title {
   max-width: 760px;

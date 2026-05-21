@@ -14,6 +14,8 @@ const MyEventsView = ({
   onEditEvent,
   onDeleteEvent,
   onToast,
+  onApproveEvent,   // optional - for external use
+  onRejectEvent,   // optional - for external use
 }) => {
   const [myEvents, setMyEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -33,6 +35,13 @@ const MyEventsView = ({
 
   useEffect(() => {
     fetchMyEvents();
+  }, []);
+
+  // Refresh when admin/organizer vets an event from anywhere (e.g. EventCard)
+  useEffect(() => {
+    const handler = () => fetchMyEvents();
+    window.addEventListener('events-updated', handler);
+    return () => window.removeEventListener('events-updated', handler);
   }, []);
 
   useEffect(() => {
@@ -98,6 +107,39 @@ const MyEventsView = ({
       ).length,
     };
   }, [myEvents]);
+
+  const handleApprove = async (event) => {
+    const token = authService.getToken();
+    if (!token) {
+      onToast?.('You must be logged in', 'error');
+      return;
+    }
+
+    try {
+      const result = await eventbriteService.approveEvent(event.id, token);
+      onToast?.(result.message || 'Event approved successfully', 'success');
+      await fetchMyEvents();
+    } catch (err) {
+      onToast?.(err.message || 'Failed to approve event', 'error');
+    }
+  };
+
+  const handleReject = async (event) => {
+    const note = prompt('Optional rejection reason/note (can be empty):') || '';
+    const token = authService.getToken();
+    if (!token) {
+      onToast?.('You must be logged in', 'error');
+      return;
+    }
+
+    try {
+      const result = await eventbriteService.rejectEvent(event.id, token, note);
+      onToast?.(result.message || 'Event rejected', 'success');
+      await fetchMyEvents();
+    } catch (err) {
+      onToast?.(err.message || 'Failed to reject event', 'error');
+    }
+  };
 
   return (
     <div className="saved-events-view">
@@ -189,13 +231,15 @@ const MyEventsView = ({
       {!loading &&
         !error &&
         filteredEvents.length > 0 && (
-          <EventGrid
-            events={filteredEvents}
-            onEventClick={onEventClick}
-            onEditEvent={onEditEvent}
-            onDeleteEvent={onDeleteEvent}
-            onToast={onToast}
-          />
+           <EventGrid
+             events={filteredEvents}
+             onEventClick={onEventClick}
+             onEditEvent={onEditEvent}
+             onDeleteEvent={onDeleteEvent}
+             onToast={onToast}
+             onApproveEvent={handleApprove}
+             onRejectEvent={handleReject}
+           />
         )}
     </div>
   );

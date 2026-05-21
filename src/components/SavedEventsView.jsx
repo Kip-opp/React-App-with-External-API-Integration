@@ -188,18 +188,12 @@ const SavedEventsView = ({
 
       {!loading && !error && filteredEvents.length > 0 && (
         <div className="saved-events-list">
-          {filteredEvents.map((event) => (
-            <div
-              key={`${event.source}-${event.saved_event_id}`}
-              className="saved-event-wrapper"
-            >
-              <EventGrid
-                events={[event]}
-                onEventClick={onEventClick}
-                onToast={onToast}
-                onDeleteEvent={handleRemoveSaved}
-              />
-
+          <EventGrid
+            events={filteredEvents}
+            onEventClick={onEventClick}
+            onToast={onToast}
+            onDeleteEvent={handleRemoveSaved}
+            renderActions={(event) => (
               <div className="saved-event-actions">
                 <button
                   type="button"
@@ -230,8 +224,8 @@ const SavedEventsView = ({
                   </p>
                 )}
               </div>
-            </div>
-          ))}
+            )}
+          />
         </div>
       )}
 

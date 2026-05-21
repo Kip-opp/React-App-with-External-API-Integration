@@ -37,6 +37,13 @@ const OrganizerDashboard = ({
     fetchOrganizerEvents();
   }, []);
 
+  // Refresh list when events are vetted/updated elsewhere
+  useEffect(() => {
+    const handler = () => fetchOrganizerEvents();
+    window.addEventListener('events-updated', handler);
+    return () => window.removeEventListener('events-updated', handler);
+  }, []);
+
   const filteredEvents = useMemo(() => {
     if (statusFilter === 'all') return events;
     return events.filter((event) => event.status === statusFilter);

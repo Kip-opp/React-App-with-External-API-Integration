@@ -9,6 +9,9 @@ function EventGrid({
   onSaveToggle,
   onEditEvent,
   onDeleteEvent,
+  onApproveEvent,
+  onRejectEvent,
+  renderActions,
 }) {
   if (!events.length) {
     return (
@@ -33,7 +36,7 @@ function EventGrid({
             event.id ||
             event.name;
 
-          return (
+          const card = (
             <EventCard
               key={`${event.source || 'local'}-${eventKey}`}
               event={event}
@@ -43,8 +46,17 @@ function EventGrid({
               onSaveToggle={onSaveToggle}
               onEdit={onEditEvent}
               onDelete={onDeleteEvent}
+              onApprove={onApproveEvent}
+              onReject={onRejectEvent}
             />
           );
+
+          return renderActions ? (
+            <div key={`${event.source || 'local'}-${eventKey}-wrapper`} className="event-with-actions">
+              {card}
+              {renderActions(event)}
+            </div>
+          ) : card;
         })}
       </div>
     </section>
