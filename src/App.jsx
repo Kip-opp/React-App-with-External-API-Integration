@@ -7,7 +7,7 @@ import SearchHero from './components/SearchHero';
 import EventGrid from './components/EventGrid';
 import Footer from './components/Footer';
 import { Loader, ErrorState, EmptyState } from './components/StateViews';
-import CreateEventForm from './components/CreateEventForm';
+import EventForm from './components/EventForm';
 import EventDetails from './components/EventDetails';
 import AuthModal from './components/AuthModal';
 import Toast from './components/Toast';
@@ -44,6 +44,7 @@ function App() {
   const [pendingEvent, setPendingEvent] = useState(null);
   const [toast, setToast] = useState(null);
   const [user, setUser] = useState(authService.getCurrentUser?.());
+  const [editingEvent, setEditingEvent] = useState(null);
 
   const [darkMode, setDarkMode] = useLocalStorage(
     'eventsphere_dark_mode',
@@ -189,6 +190,15 @@ function App() {
     }
   }, [currentView]);
 
+  // Listen for vetted/updated events from cards (e.g. admin approve/reject) to refresh lists
+  useEffect(() => {
+    const handleEventsUpdated = () => {
+      refetch();
+    };
+    window.addEventListener('events-updated', handleEventsUpdated);
+    return () => window.removeEventListener('events-updated', handleEventsUpdated);
+  }, [refetch]);
+
   const showToast = (
     message,
     type = 'success',
@@ -264,10 +274,12 @@ function App() {
       return;
     }
 
+    setEditingEvent(null);
     setCurrentView('create');
   };
 
   const handleBackToAllEvents = () => {
+    setEditingEvent(null);
     setCurrentView('all-events');
     refetch();
   };
@@ -276,6 +288,7 @@ function App() {
     stopReminderSound();
     shownRemindersRef.current.clear();
     setUser(null);
+    setEditingEvent(null);
     setCurrentView('all-events');
     showToast('Logged out successfully', 'info');
   };
@@ -336,8 +349,32 @@ function App() {
   };
 
   const handleEditEvent = (event) => {
-    showToast('Edit event form will be connected next', 'info');
-    setSelectedEvent(event);
+    if (!authService.isAuthenticated()) {
+      setShowAuthModal(true);
+      return;
+    }
+    if (!authService.canCreateEvents()) {
+      showToast('Only organizers and admins can edit events', 'error');
+      return;
+    }
+    setEditingEvent(event);
+    setCurrentView('create'); // reuse the form view slot for editing
+  };
+
+  const handleEventUpdated = (result) => {
+    const wasEditing = !!editingEvent;
+    setEditingEvent(null);
+    setCurrentView('all-events');
+    refetch();
+
+    const message = result?.message || (wasEditing ? 'Event updated successfully' : 'Event saved');
+    showToast(message, 'success');
+
+    // For non-admin edits, the backend forces pending status — inform the user
+    const currentRole = user?.role;
+    if (wasEditing && currentRole !== 'admin') {
+      showToast('Your changes were saved. The event is now pending admin re-approval.', 'info');
+    }
   };
 
   const handleAdminDashboardClick = () => {
@@ -382,10 +419,11 @@ function App() {
       )}
 
       <main className="main-content">
-        {currentView === 'create' && authService.isAuthenticated() && (
+        {(currentView === 'create' || currentView === 'edit') && authService.isAuthenticated() && (
           <div ref={createFormRef} className="view-shell">
-            <CreateEventForm
-              onEventCreated={handleEventCreated}
+            <EventForm
+              event={editingEvent}
+              onEventSaved={editingEvent ? handleEventUpdated : handleEventCreated}
               onCancel={handleBackToAllEvents}
             />
           </div>

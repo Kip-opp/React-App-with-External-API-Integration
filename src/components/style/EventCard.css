@@ -307,6 +307,49 @@
   .event-card__content {
     padding: 1.25rem;
   }
+}
+
+/* Admin vetting actions (Approve / Reject) visible to admins on pending local events */
+.event-vetting-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(249, 115, 22, 0.2);
+}
+
+.event-vetting-actions button {
+  border: none;
+  border-radius: 16px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.event-vetting-actions .approve-btn {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.event-vetting-actions .approve-btn:hover {
+  background: #16a34a;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.event-vetting-actions .reject-btn {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.event-vetting-actions .reject-btn:hover {
+  background: #dc2626;
+  color: white;
+  transform: translateY(-1px);
+}
 
   .event-card__title {
     font-size: 1.18rem;

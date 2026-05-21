@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import EventbriteCheckoutButton from './EventbriteCheckoutButton';
 import authService from '../services/authService';
+import eventbriteService from '../services/eventbriteService';
 import savedEventsService from '../services/savedEventsService';
 import './style/EventCard.css';
 
@@ -12,6 +13,8 @@ const EventCard = ({
   onCheckoutAuth,
   onEdit,
   onDelete,
+  onApprove,
+  onReject,
 }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [savedEventId, setSavedEventId] = useState(null);
@@ -31,6 +34,12 @@ const EventCard = ({
     currentUser &&
     isLocal &&
     (role === 'admin' || Number(event.user_id) === Number(currentUser.id));
+
+  const canVetEvent =
+    currentUser &&
+    role === 'admin' &&
+    isLocal &&
+    event.status === 'pending';
 
   useEffect(() => {
     checkIfSaved();
@@ -120,6 +129,39 @@ const EventCard = ({
 
     if (onDelete) {
       onDelete(event);
+    }
+  };
+
+  const handleApproveClick = async (e) => {
+    e.stopPropagation();
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        onToast?.('You must be logged in', 'error');
+        return;
+      }
+      const result = await eventbriteService.approveEvent(event.id, token);
+      onToast?.(result.message || 'Event approved successfully', 'success');
+      window.dispatchEvent(new CustomEvent('events-updated'));
+    } catch (err) {
+      onToast?.(err.message || 'Failed to approve event', 'error');
+    }
+  };
+
+  const handleRejectClick = async (e) => {
+    e.stopPropagation();
+    const note = prompt('Optional rejection reason/note (can be empty):') || '';
+    try {
+      const token = authService.getToken();
+      if (!token) {
+        onToast?.('You must be logged in', 'error');
+        return;
+      }
+      const result = await eventbriteService.rejectEvent(event.id, token, note);
+      onToast?.(result.message || 'Event rejected', 'success');
+      window.dispatchEvent(new CustomEvent('events-updated'));
+    } catch (err) {
+      onToast?.(err.message || 'Failed to reject event', 'error');
     }
   };
 
@@ -336,6 +378,39 @@ const EventCard = ({
 
             <button type="button" className="danger" onClick={handleDeleteClick}>
               Delete
+            </button>
+          </div>
+        )}
+
+        {canVetEvent && (
+          <div className="event-vetting-actions">
+            <button
+              type="button"
+              className="approve-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onApprove) {
+                  onApprove(event);
+                } else {
+                  handleApproveClick(e);
+                }
+              }}
+            >
+              ✓ Approve
+            </button>
+            <button
+              type="button"
+              className="reject-btn danger"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onReject) {
+                  onReject(event);
+                } else {
+                  handleRejectClick(e);
+                }
+              }}
+            >
+              ✗ Reject
             </button>
           </div>
         )}

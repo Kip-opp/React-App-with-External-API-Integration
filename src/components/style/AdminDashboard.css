@@ -140,6 +140,19 @@
   border-radius: 20px;
   background: rgba(249, 115, 22, 0.05);
   border: 1px solid rgba(249, 115, 22, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-dashboard .pending-event-item:hover {
+  background: rgba(249, 115, 22, 0.09);
+  border-color: rgba(249, 115, 22, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
+}
+
+.admin-dashboard .pending-event-item.clickable {
+  cursor: pointer;
 }
 
 .admin-dashboard .pending-event-info h4 {
@@ -348,4 +361,172 @@
   .admin-dashboard .reject-btn {
     width: 100%;
   }
+}
+
+/* Rejected Events Section */
+.admin-dashboard .rejected-review-card {
+  border-left: 5px solid #dc2626;
+}
+
+.admin-dashboard .rejected-item {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.admin-dashboard .rejection-note {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* ============================================
+   PENDING EVENTS REVIEW MODAL - Enhanced Styling
+   ============================================ */
+
+.review-modal {
+  max-width: 780px;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.review-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  padding-top: 0.5rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.review-header h3 {
+  margin: 0;
+  font-size: 1.65rem;
+  font-weight: 950;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+.review-creator {
+  font-size: 0.95rem;
+  color: var(--muted-text);
+  background: rgba(249, 115, 22, 0.06);
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.review-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.85rem 1.25rem;
+  background: rgba(15, 23, 42, 0.035);
+  padding: 1.1rem 1.25rem;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+}
+
+.review-details-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.review-details-grid strong {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted-text);
+  font-weight: 700;
+}
+
+.review-description,
+.review-note {
+  padding: 1.15rem 1.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.review-description strong,
+.review-note strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted-text);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.review-description p,
+.review-note p {
+  margin: 0;
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.review-note {
+  border-left: 5px solid #dc2626;
+  background: rgba(239, 68, 68, 0.035);
+}
+
+.review-actions {
+  display: flex;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.review-actions .approve-btn.large,
+.review-actions .reject-btn.large {
+  flex: 1;
+  min-width: 170px;
+  padding: 1rem 1.6rem;
+  font-size: 1.02rem;
+  font-weight: 900;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.review-actions .approve-btn.large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
+}
+
+.review-actions .reject-btn.large:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+}
+
+.review-actions .btn-secondary {
+  padding: 1rem 1.6rem;
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--muted-text);
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.review-actions .btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--text-color);
+  border-color: var(--text-color);
 }

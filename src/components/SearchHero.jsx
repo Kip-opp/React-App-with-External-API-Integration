@@ -73,12 +73,6 @@ const SearchHero = ({
 
       <div className="search-hero__content">
         <div className="hero-copy">
-          <span className="hero-kicker">
-            {role === 'guest'
-              ? 'EventSphere Live'
-              : `${role} dashboard`}
-          </span>
-
           <h1 className="search-hero__title">
             {getHeroTitle()}
           </h1>
