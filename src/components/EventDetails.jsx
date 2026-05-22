@@ -30,7 +30,7 @@ const EventDetails = ({ eventId, eventSource, eventData, onClose, onToast }) => 
 
   const fetchEventDetails = async () => {
     try {
-      const response = await fetch(`${API_BASE}/events/${eventId}`);
+      const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch event details');

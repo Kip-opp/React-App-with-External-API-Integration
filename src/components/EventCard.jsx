@@ -351,7 +351,6 @@ const EventCard = ({
               eventUrl={checkout_url || event.event_url || event.url}
               isFree={is_free}
               className="event-card__button"
-              onRequireAuth={onCheckoutAuth}
             />
           ) : isTicketmaster ? (
             <a
