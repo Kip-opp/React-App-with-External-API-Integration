@@ -32,13 +32,19 @@ const PopupButton = ({ eventbriteId, className, disabled, isFree, onOrderComplet
   }
 
   return (
-    <button
-      id={eb.id}
-      type="button"
-      className={`eventbrite-checkout-btn ${className}`}
-      disabled={disabled}
-      onClick={(e) => e.stopPropagation()}
-    >
+  <button
+    id={eb.id}
+    type="button"
+    className={`eventbrite-checkout-btn ${className}`}
+    disabled={disabled}
+    onClick={(e) => {
+      e.stopPropagation();
+
+      if (eb.open) {
+        eb.open();
+      }
+    }}
+  >
       {disabled ? 'Unavailable' : isFree ? '🎟️ Register Free' : '🎫 Buy Tickets'}
     </button>
   );
